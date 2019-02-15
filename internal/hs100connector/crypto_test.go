@@ -6,6 +6,7 @@ import (
 	"github.com/jaedle/golang-tplink-hs100/internal/hs100connector"
 
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 )
 
@@ -25,9 +26,12 @@ var _ = Describe("Hs100crypto", func() {
 			Expect(e).To(Equal(expected))
 		})
 
-		It("decrypts fixtures", func() {
-			e, _ := b64.StdEncoding.DecodeString("0PKB+Iv/mvfV75S2xaDUi/mc8JHot8Sw0aXA4tijgfKG55P21O7fot+i")
-			Expect(hs100connector.Decrypt(e)).To(Equal(`{"system":{"set_relay_state":{"state":1}}}`))
-		})
+		DescribeTable("decrypts fixtures", func(encrypted string, decrypted string) {
+			e, _ := b64.StdEncoding.DecodeString(encrypted)
+			Expect(hs100connector.Decrypt(e)).To(Equal(decrypted))
+		},
+			Entry("fixture-1", "0PKB+Iv/mvfV75S2xaDUi/mc8JHot8Sw0aXA4tijgfKG55P21O7fot+i", `{"system":{"set_relay_state":{"state":1}}}`),
+			Entry("fixture-2", "0PDSodir37rX9c+0lLbRtMCf7JXmj+GH6MrwnuuH68u2lus=", `{ "system":{ "get_sysinfo":null } }`),
+		)
 	})
 })
