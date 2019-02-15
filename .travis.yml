@@ -1,3 +1,11 @@
 language: go
 go:
 - '1.11.5'
+env:
+  matrix:
+  - GO111MODULE=on
+before_install:
+- $(cd $HOME && curl -s https://raw.githubusercontent.com/go-task/task/master/install-task.sh | sh)
+- export PATH="$HOME/bin:$PATH"
+install:
+- task install
