@@ -37,15 +37,6 @@ var _ = Describe("Connector", func() {
 		err := hs100connector.SendCommand(localHostDevice())
 		Expect(err).To(HaveOccurred())
 	})
-
-	Describe("encrypt / decrypt", func() {
-		It("encrypts and decrypts", func() {
-			plain := "{command: example}"
-			e := hs100connector.Encrypt(plain)
-			d := hs100connector.Decrypt(e)
-			Expect(plain).To(Equal(d))
-		})
-	})
 })
 
 func startServer() net.Listener {
