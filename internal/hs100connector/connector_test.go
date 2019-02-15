@@ -12,10 +12,16 @@ import (
 
 var _ = Describe("Connector", func() {
 	It("returns no error", func() {
-		requestContent := make(chan string)
-		go startServer(requestContent)
+		l, err := net.Listen("tcp", ":9999")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer l.Close()
 
-		err := hs100connector.SendCommand(aDevice("127.0.0.1"))
+		requestContent := make(chan string)
+		go startServer(l, requestContent)
+
+		err2 := hs100connector.SendCommand(aDevice("127.0.0.1"))
 
 		var r string = ""
 		select {
@@ -25,18 +31,13 @@ var _ = Describe("Connector", func() {
 			Fail("received no return value")
 		}
 
-		Expect(err).NotTo(HaveOccurred())
+		Expect(err2).NotTo(HaveOccurred())
 		Expect(r).To(Equal("expected-command"))
 	})
 
 })
 
-func startServer(response chan string) {
-	l, err := net.Listen("tcp", ":9999")
-	if err != nil {
-		log.Fatal(err)
-	}
-
+func startServer(l net.Listener, response chan string) {
 	conn, err := l.Accept()
 	if err != nil {
 		Fail("can not start server")
@@ -52,7 +53,6 @@ func startServer(response chan string) {
 	_, _ = conn.Write([]byte("Message received."))
 	_ = conn.Close()
 	response <- received
-	l.Close()
 }
 
 func aDevice(ip string) hs100connector.Hs100 {
