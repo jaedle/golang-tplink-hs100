@@ -17,6 +17,14 @@ func SendCommand(h Hs100) error {
 	return nil
 }
 
+func Encrypt(s string) []byte {
+	return []byte(s)
+}
+
+func Decrypt(d []byte) string {
+	return string(d)
+}
+
 type Hs100 struct {
 	IPAddress string
 }
