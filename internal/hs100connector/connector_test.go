@@ -10,36 +10,43 @@ import (
 )
 
 var _ = Describe("Connector", func() {
+	const t = 1 * time.Second
+
 	It("sends expected command", func() {
-		l, err := net.Listen("tcp", ":9999")
-		if err != nil {
-			Fail("could not start test server")
-		}
+		l := startServer()
 		defer l.Close()
 
 		requestContent := make(chan string)
 		go handleRequest(l, requestContent)
 
-		err = hs100connector.SendCommand(aDevice("127.0.0.1"))
+		err := hs100connector.SendCommand(localHostDevice())
 
-		var r string = ""
+		var request string
 		select {
-		case r = <-requestContent:
+		case request = <-requestContent:
 			break
-		case <-time.After(1 * time.Second):
+		case <-time.After(t):
 			Fail("received no return value")
 		}
 
+		Expect(request).To(Equal("expected-command"))
 		Expect(err).NotTo(HaveOccurred())
-		Expect(r).To(Equal("expected-command"))
 	})
 
 	It("fails if cannot connect", func() {
-		err := hs100connector.SendCommand(aDevice("127.0.0.1"))
+		err := hs100connector.SendCommand(localHostDevice())
 		Expect(err).To(HaveOccurred())
 	})
 
 })
+
+func startServer() net.Listener {
+	l, err := net.Listen("tcp", ":9999")
+	if err != nil {
+		Fail("could not start test server")
+	}
+	return l
+}
 
 func handleRequest(l net.Listener, response chan string) {
 	conn, err := l.Accept()
@@ -59,8 +66,8 @@ func handleRequest(l net.Listener, response chan string) {
 	response <- received
 }
 
-func aDevice(ip string) hs100connector.Hs100 {
+func localHostDevice() hs100connector.Hs100 {
 	return hs100connector.Hs100{
-		IPAddress: ip,
+		IPAddress: "127.0.0.1",
 	}
 }
