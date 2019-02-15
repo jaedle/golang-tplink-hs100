@@ -4,4 +4,8 @@ tasks:
   install:
     silent: true
     cmds:
-     - go mod download
+    - go mod download
+  test:
+    silent: true
+    cmds:
+    - go test github.com/jaedle/golang-tplink-hs100/... -v

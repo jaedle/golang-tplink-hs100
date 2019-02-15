@@ -9,3 +9,5 @@ before_install:
 - export PATH="$HOME/bin:$PATH"
 install:
 - task install
+script:
+- task test
