@@ -6,7 +6,11 @@ import (
 )
 
 func SendCommand(h Hs100) error {
-	conn, _ := net.Dial("tcp", h.IPAddress+":9999")
+	conn, err := net.Dial("tcp", h.IPAddress+":9999")
+	if err != nil {
+		return err
+	}
+
 	writer := bufio.NewWriter(conn)
 	_, _ = writer.WriteString("expected-command")
 	_ = writer.Flush()

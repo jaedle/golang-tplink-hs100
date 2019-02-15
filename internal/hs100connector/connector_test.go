@@ -20,7 +20,7 @@ var _ = Describe("Connector", func() {
 		requestContent := make(chan string)
 		go handleRequest(l, requestContent)
 
-		err2 := hs100connector.SendCommand(aDevice("127.0.0.1"))
+		err = hs100connector.SendCommand(aDevice("127.0.0.1"))
 
 		var r string = ""
 		select {
@@ -30,8 +30,13 @@ var _ = Describe("Connector", func() {
 			Fail("received no return value")
 		}
 
-		Expect(err2).NotTo(HaveOccurred())
+		Expect(err).NotTo(HaveOccurred())
 		Expect(r).To(Equal("expected-command"))
+	})
+
+	It("fails if cannot connect", func() {
+		err := hs100connector.SendCommand(aDevice("127.0.0.1"))
+		Expect(err).To(HaveOccurred())
 	})
 
 })
