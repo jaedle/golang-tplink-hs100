@@ -8,4 +8,8 @@ tasks:
   test:
     silent: true
     cmds:
-    - go test github.com/jaedle/golang-tplink-hs100/... -v
+    - ginkgo -r
+  test-watch:
+    silent: true
+    cmds:
+    - ginkgo watch -r

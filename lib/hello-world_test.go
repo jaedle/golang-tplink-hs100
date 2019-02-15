@@ -12,4 +12,3 @@ var _ = Describe("HelloWorld", func() {
 		Expect(s).To(Equal("Hello World!"))
 	})
 })
-
