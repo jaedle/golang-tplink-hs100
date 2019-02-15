@@ -5,7 +5,7 @@ env:
   matrix:
   - GO111MODULE=on
 before_install:
-- "$(cd "$HOME" && curl -s https://raw.githubusercontent.com/go-task/task/master/install-task.sh | sh)"
+- $(cd $HOME && curl -s https://raw.githubusercontent.com/go-task/task/master/install-task.sh | sh)
 - export PATH="$PATH:$HOME/bin"
 - go install github.com/onsi/ginkgo/ginkgo
 - export PATH="$PATH:$HOME/gopath/bin"
