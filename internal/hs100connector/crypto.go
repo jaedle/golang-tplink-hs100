@@ -11,14 +11,14 @@ func Encrypt(s string) []byte {
 	return b
 }
 
-func Decrypt(encrypted []byte) string {
+func Decrypt(b []byte) string {
 	k := byte(0xAB)
 	var newKey byte
-	for i := 0; i < len(encrypted); i++ {
-		newKey = encrypted[i]
-		encrypted[i] = encrypted[i] ^ k
+	for i := 0; i < len(b); i++ {
+		newKey = b[i]
+		b[i] = b[i] ^ k
 		k = newKey
 	}
 
-	return string(encrypted)
+	return string(b)
 }
