@@ -17,7 +17,10 @@ func (h Device) SendCommand(c Command) error {
 	defer conn.Close()
 
 	writer := bufio.NewWriter(conn)
-	writer.Write(crypto.EncryptWithHeader(c.c))
+	_, err = writer.Write(crypto.EncryptWithHeader(c.c))
+	if err != nil {
+		return err
+	}
 	writer.Flush()
 	return nil
 }

@@ -13,3 +13,7 @@ tasks:
     silent: true
     cmds:
     - ginkgo watch -r
+  lint:
+    silent: true
+    cmds:
+    - golangci-lint run
