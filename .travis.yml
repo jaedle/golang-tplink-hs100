@@ -3,7 +3,7 @@ go:
 - 1.11.5
 addons:
   sonarcloud:
-    organization: "sonarcloud_organization_key"
+    organization: "jaedle-github"
     token:
       secure: "Ay12EFIPVwGjrRh7Ycydx3j346rpzSGVqMD0U5fcbRTLgnPRcf1/U+jWLunS1UdeCSFOQR34Rx6gdRfEgv77+vVhge9aZHdcQvgcazWY7vs+C5ECE5eoATvBO7AMu0hI6m0VNb9wFT6mMkXclzHRklWofzWqw1vLdPGKGr4lpjMRk3kj+apaVxhuj1BBKoOw0w2ar9qgLlflA7MCAxRx/VTsdOfAalJZ8f8xn+SbkfvfLS/PASqiyglit0Gr7Wy7kc9PVeXsSf8actQj+NRb9pqNQ5/BRkX0QynnkoUNXUu6upnm0MwFaUpoMvGLRpAnALSaQSj5Knl1g/EP7OLU2/6O/E7vwU/IEGjxz9lumf1S++5nCeD2KTgkIgbrJPYbaB4I+KXkVqdpEeolsKwBgEqNOUlybvex4FTdM8XubkKUxiyCrxvA8q6CtV3S/z0klsM2kC5CIExZUB+YHejFEZAANu/oXIW+zW1zb15vw53WTv71TAHRxjzxcZh553Z5qdKQYhzboSXt5D6Aqw8y6Ckm9MMsBaHb6nhioMVQVOCoImgmqAL0MW5W76HI776PwuAOYXT0bXeIEYoYRiyW7BZdZMGIjIweeKF/bCUqOZVf/FTBMrEfXwrESLGE/asBO3fnf9kVSrL0rxegTjqcXPmW5ByzaJJgz5LDLdUOulQ="
 env:
