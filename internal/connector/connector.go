@@ -16,14 +16,21 @@ func (h Device) SendCommand(c Command) error {
 	}
 
 	writer := bufio.NewWriter(conn)
-	writer.Write(crypto.EncryptWithHeader(c.C))
+	writer.Write(crypto.EncryptWithHeader(c.c))
 	writer.Flush()
 	return nil
 }
 
 type Command struct {
-	C string
+	c string
 }
+
+func NewCommand(cmd string) Command {
+	return Command{
+		c: cmd,
+	}
+}
+
 type Device struct {
 	ipAddress string
 }

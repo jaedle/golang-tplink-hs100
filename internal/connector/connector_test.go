@@ -68,9 +68,7 @@ func handleRequest(l net.Listener, response chan []byte) {
 }
 
 func command(cmd string) c.Command {
-	return c.Command{
-		C: cmd,
-	}
+	return c.NewCommand(cmd)
 }
 
 func localHostDevice() c.Device {
