@@ -20,7 +20,7 @@ var _ = Describe("Connector", func() {
 		requestContent := make(chan []byte)
 		go handleRequest(l, requestContent)
 
-		err := c.SendCommand(localHostDevice())
+		err := c.SendCommand(localHostDevice(), command(`{"expected": "command"}}`))
 
 		var request []byte
 		select {
@@ -30,12 +30,12 @@ var _ = Describe("Connector", func() {
 			Fail("received no return value")
 		}
 
-		Expect(request).To(Equal(crypto.EncryptWithHeader("{expected: command}}")))
+		Expect(request).To(Equal(crypto.EncryptWithHeader(`{"expected": "command"}}`)))
 		Expect(err).NotTo(HaveOccurred())
 	})
 
 	It("fails if cannot connect", func() {
-		err := c.SendCommand(localHostDevice())
+		err := c.SendCommand(localHostDevice(), command(""))
 		Expect(err).To(HaveOccurred())
 	})
 })
@@ -64,6 +64,12 @@ func handleRequest(l net.Listener, response chan []byte) {
 	_, _ = conn.Write([]byte(""))
 	_ = conn.Close()
 	response <- received
+}
+
+func command(cmd string) c.Command {
+	return c.Command{
+		C: cmd,
+	}
 }
 
 func localHostDevice() c.Hs100 {
