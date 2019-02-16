@@ -3,7 +3,7 @@ go:
 - 1.11.5
 env:
   matrix:
-  - GO111MODULE=auto
+  - GO111MODULE=on
   global:
     secure: W2uqJnQ/uS3d0wOjV72u6uAkj6degXr+dNpsjBMp2EV40u9/3DQWxq+mODRUS/PGsXUY1hOIAR1K+zNoFA0ermN0oooDmBlGO50OabAi4GiGWvHNlXLDm219fduKhzMYyO5Ta5+cJi1vWaZ6A/XDFUBDRs9dduBmqnfavg9yLauvHI8yIGph2n++pbQy9ZYuiLGAAlp65wLwMn8Ck5h0YVV63J0q981pegOuRLvxUx2rCSS6QKpIQz08fjxbuaPeK7C5WocXAU8BMsAa0dHK4x56hCb3lsUByc90+xVDBOZvVsN2bT8VSJLCAOi1Gs962HgVBVcg0/mLIsxwWep74F/g/VRmrEbdrm0zQRaVcFdX1HcyjylZdOC3WP7jz6m+Ojp3+fYunun/b9hgpBl7Y37whTt0Ojl7kTH2tFVmG2aEZsPJbNapcYDOmeF/Yw31XtUQ+jnLfU9ZjQehCDJnYaZf/Pvt4lYTO5VqWkiPdqAfUq0QW8aRJ2V/fjIjkao7DsTax4W5i/1VZ33/25GG3LFAhfeQZjO1ZGgWyhb7epLN4Hn/upk/zd0N3IHx9HLGGjWQ4CABwXuxLcyrLtQX68nhE7pZiRbbpnxJe2cUMg8Oi7XT2O38tOQdHAmIP0RGmfqyxnDABW8TY7hm5SODWKpTKss5mZrMn9s3M7FAXzU=
 before_install:
@@ -12,9 +12,9 @@ before_install:
 - "$(cd $HOME && curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh
   | sh -s v1.14.0)"
 - export PATH="$PATH:$HOME/bin"
-- "$(cd $HOME && go get github.com/onsi/ginkgo/ginkgo)"
-- "$(cd $HOME && go get github.com/modocache/gover)"
-- "$(cd $HOME && go get github.com/mattn/goveralls)"
+- "$(cd $HOME && GO111MODULE=off go get github.com/onsi/ginkgo/ginkgo)"
+- "$(cd $HOME && GO111MODULE=off go get github.com/modocache/gover)"
+- "$(cd $HOME && GO111MODULE=off go get github.com/mattn/goveralls)"
 - export PATH="$PATH:$HOME/gopath/bin"
 install:
 - task install
