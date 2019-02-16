@@ -24,8 +24,12 @@ tasks:
     silent: true
     cmds:
     - golangci-lint run
-  upload-coverage:
+  coveralls-analysis:
     silent: true
     cmds:
     - gover
     - goveralls -coverprofile=gover.coverprofile -service=travis-ci
+  sonar-analysis:
+    silent: true
+    cmds:
+    - sonar-scanner

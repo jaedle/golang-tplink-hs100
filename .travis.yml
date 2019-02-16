@@ -21,5 +21,5 @@ install:
 script:
 - task test
 - task lint
-- task upload-coverage
-- sonar-scanner
+- task coveralls-analysis
+- task sonar-analysis
