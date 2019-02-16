@@ -32,4 +32,5 @@ tasks:
   sonar-analysis:
     silent: true
     cmds:
+    - gover
     - sonar-scanner
