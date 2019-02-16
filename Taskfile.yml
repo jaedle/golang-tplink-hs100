@@ -8,7 +8,7 @@ tasks:
   test:
     silent: true
     cmds:
-    - ginkgo -r
+    - ginkgo -r -cover
   test-watch:
     silent: true
     cmds:
@@ -17,3 +17,11 @@ tasks:
     silent: true
     cmds:
     - golangci-lint run
+  collect-coverage:
+    silent: true
+    cmds:
+    - gover
+  upload-coverage:
+    silent: true
+    cmds:
+    - service=travis-ci
