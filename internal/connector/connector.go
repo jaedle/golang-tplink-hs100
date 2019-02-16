@@ -7,7 +7,7 @@ import (
 	"github.com/jaedle/golang-tplink-hs100/internal/crypto"
 )
 
-func SendCommand(h Hs100, c Command) error {
+func (h Hs100) SendCommand(c Command) error {
 	conn, err := net.Dial("tcp", h.IPAddress+":9999")
 	if err != nil {
 		return err

@@ -19,8 +19,9 @@ var _ = Describe("Connector", func() {
 
 		requestContent := make(chan []byte)
 		go handleRequest(l, requestContent)
+		dev := localHostDevice()
 
-		err := c.SendCommand(localHostDevice(), command(`{"expected": "command"}}`))
+		err := dev.SendCommand(command(`{"expected": "command"}}`))
 
 		var request []byte
 		select {
@@ -35,7 +36,8 @@ var _ = Describe("Connector", func() {
 	})
 
 	It("fails if cannot connect", func() {
-		err := c.SendCommand(localHostDevice(), command(""))
+		dev := localHostDevice()
+		err := dev.SendCommand(command(""))
 		Expect(err).To(HaveOccurred())
 	})
 })
