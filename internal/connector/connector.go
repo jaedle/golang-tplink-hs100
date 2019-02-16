@@ -7,8 +7,8 @@ import (
 	"github.com/jaedle/golang-tplink-hs100/internal/crypto"
 )
 
-func (h Hs100) SendCommand(c Command) error {
-	conn, err := net.Dial("tcp", h.IPAddress+":9999")
+func (h Device) SendCommand(c Command) error {
+	conn, err := net.Dial("tcp", h.ipAddress+":9999")
 	if err != nil {
 		return err
 	}
@@ -22,12 +22,12 @@ func (h Hs100) SendCommand(c Command) error {
 type Command struct {
 	C string
 }
-type Hs100 struct {
-	IPAddress string
+type Device struct {
+	ipAddress string
 }
 
-func NewDevice(ipAddress string) Hs100 {
-	return Hs100{
-		IPAddress: ipAddress,
+func NewDevice(ipAddress string) Device {
+	return Device{
+		ipAddress: ipAddress,
 	}
 }

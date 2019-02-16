@@ -74,6 +74,6 @@ func command(cmd string) c.Command {
 	}
 }
 
-func localHostDevice() c.Hs100 {
+func localHostDevice() c.Device {
 	return c.NewDevice("127.0.0.1")
 }
