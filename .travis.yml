@@ -1,6 +1,11 @@
 language: go
 go:
 - 1.11.5
+addons:
+  sonarcloud:
+    organization: "sonarcloud_organization_key"
+    token:
+      secure: "c/m3iViAos055YIjRI2OiQsho3xHvajzzUc37xuPCiaNems1dUjVPVqNNSIN8P/GWHHiVdjGH/gGDH5pO2aPQ6Wm88yWzHZCrRTF9gBcjFiv/72PhyQdgmjjDawP5wNiZEHYOS3hhHP1squ1sSaU7ub2kX0BQkRZxCJKbwo8KfXoTsh0VxbICbthOZQxzGhPqh4Df9I/Y/lDYyZqutjbOu3jHuTPpFOJeNtbngKbSHxbcMa6vJAH19ek3P5lBhsQXFnGhS9tB8jpk/sMGdMkL8x4WDHs6uP32KEI7NjoUXhyJI5EPzha/oobijZwHyxqFZLqCpkC/KFzZSB02HO66FndfIcWK3im58MEKp6XFHfsZBdOwvw71WUSoU1QRAbSOVmpyFCfJQqgsESkpqREv/adR7YthdbKsrkXHWim6zFE2l3jEVP/rbmgqiXYhPS/LITyziOs4Nc2KLSeq95YEuOW6Sz483Qc89JilGfqMWNMWJU10pyNtBB+zxYlNWOpyMDjN6OSUkFROmz+tg+5/9TtFWI2MouilPnWoZXzBy+IzhciwyQZ7lYWbA4NxevMOzW/mdMIZ9uPgw1EvfkzUqkeTR6GKdQcTAWIW29GGdWMuJmYl/+4m0F3YVbI0XSsXjOtWvVrtqqv+Ol4KJ06HAFMa4AGW7/Z8wy5ieZinAc="
 env:
   matrix:
   - GO111MODULE=on
@@ -17,3 +22,4 @@ script:
 - task test
 - task lint
 - task upload-coverage
+- sonar-scanner
