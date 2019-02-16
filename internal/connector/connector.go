@@ -7,8 +7,10 @@ import (
 	"github.com/jaedle/golang-tplink-hs100/internal/crypto"
 )
 
+const devicePort = ":9999"
+
 func (h Device) SendCommand(c Command) error {
-	conn, err := net.Dial("tcp", h.ipAddress+":9999")
+	conn, err := net.Dial("tcp", h.ipAddress+devicePort)
 	if err != nil {
 		return err
 	}
