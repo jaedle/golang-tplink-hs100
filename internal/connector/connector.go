@@ -14,6 +14,7 @@ func (h Device) SendCommand(c Command) error {
 	if err != nil {
 		return err
 	}
+	defer conn.Close()
 
 	writer := bufio.NewWriter(conn)
 	writer.Write(crypto.EncryptWithHeader(c.c))
