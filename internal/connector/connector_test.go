@@ -75,7 +75,5 @@ func command(cmd string) c.Command {
 }
 
 func localHostDevice() c.Hs100 {
-	return c.Hs100{
-		IPAddress: "127.0.0.1",
-	}
+	return c.NewDevice("127.0.0.1")
 }

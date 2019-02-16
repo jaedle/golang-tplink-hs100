@@ -25,3 +25,9 @@ type Command struct {
 type Hs100 struct {
 	IPAddress string
 }
+
+func NewDevice(ipAddress string) Hs100 {
+	return Hs100{
+		IPAddress: ipAddress,
+	}
+}
