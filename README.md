@@ -6,6 +6,7 @@ Yet another tp-link HS100 library for golang
 
 [![Build Status](https://travis-ci.com/jaedle/golang-tplink-hs100.svg?branch=master)](https://travis-ci.com/jaedle/golang-tplink-hs100)
 [![Coverage Status](https://coveralls.io/repos/github/jaedle/golang-tplink-hs100/badge.svg?branch=master)](https://coveralls.io/github/jaedle/golang-tplink-hs100?branch=master)
+[![GolangCI](https://golangci.com/badges/github.com/jaedle/golang-tplink-hs100.svg)](https://golangci.com)
 
 ## Acknowledgements
 
