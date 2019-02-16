@@ -5,6 +5,7 @@ import (
 	"time"
 
 	c "github.com/jaedle/golang-tplink-hs100/internal/connector"
+	"github.com/jaedle/golang-tplink-hs100/internal/crypto"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -16,12 +17,12 @@ var _ = Describe("Connector", func() {
 		l := startServer()
 		defer l.Close()
 
-		requestContent := make(chan string)
+		requestContent := make(chan []byte)
 		go handleRequest(l, requestContent)
 
 		err := c.SendCommand(localHostDevice())
 
-		var request string
+		var request []byte
 		select {
 		case request = <-requestContent:
 			break
@@ -29,7 +30,7 @@ var _ = Describe("Connector", func() {
 			Fail("received no return value")
 		}
 
-		Expect(request).To(Equal("expected-command"))
+		Expect(request).To(Equal(crypto.EncryptWithHeader("{expected: command}}")))
 		Expect(err).NotTo(HaveOccurred())
 	})
 
@@ -47,7 +48,7 @@ func startServer() net.Listener {
 	return l
 }
 
-func handleRequest(l net.Listener, response chan string) {
+func handleRequest(l net.Listener, response chan []byte) {
 	conn, err := l.Accept()
 	if err != nil {
 		Fail("can not start server")
@@ -58,7 +59,7 @@ func handleRequest(l net.Listener, response chan string) {
 	if err != nil {
 		Fail("can not read request")
 	}
-	received := string(buf[:n])
+	received := buf[:n]
 	print(received)
 	_, _ = conn.Write([]byte(""))
 	_ = conn.Close()

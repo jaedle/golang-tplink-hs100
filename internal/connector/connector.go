@@ -3,6 +3,8 @@ package connector
 import (
 	"bufio"
 	"net"
+
+	"github.com/jaedle/golang-tplink-hs100/internal/crypto"
 )
 
 func SendCommand(h Hs100) error {
@@ -12,8 +14,8 @@ func SendCommand(h Hs100) error {
 	}
 
 	writer := bufio.NewWriter(conn)
-	_, _ = writer.WriteString("expected-command")
-	_ = writer.Flush()
+	writer.Write(crypto.EncryptWithHeader("{expected: command}}"))
+	writer.Flush()
 	return nil
 }
 
