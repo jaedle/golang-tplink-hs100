@@ -12,14 +12,11 @@ before_install:
 - "$(cd $HOME && curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh
   | sh -s v1.14.0)"
 - export PATH="$PATH:$HOME/bin"
-- "$(cd $HOME && GO111MODULE=off go get github.com/onsi/ginkgo/ginkgo)"
-- "$(cd $HOME && GO111MODULE=off go get github.com/modocache/gover)"
-- "$(cd $HOME && GO111MODULE=off go get github.com/mattn/goveralls)"
 - export PATH="$PATH:$HOME/gopath/bin"
+- task install-tools
 install:
 - task install
 script:
 - task test
 - task lint
-- task collect-coverage
 - task upload-coverage
