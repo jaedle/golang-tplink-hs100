@@ -1,4 +1,4 @@
-package hs100connector
+package crypto
 
 import (
 	"encoding/binary"
