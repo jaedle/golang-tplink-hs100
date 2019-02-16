@@ -17,15 +17,15 @@ var _ = Describe("Connector", func() {
 		l := startServer()
 		defer l.Close()
 
-		requestContent := make(chan []byte)
-		go handleRequest(l, requestContent)
+		requestChan := make(chan []byte)
+		go handleRequest(l, requestChan)
 		dev := localHostDevice()
 
 		err := dev.SendCommand(command(`{"expected": "command"}}`))
 
 		var request []byte
 		select {
-		case request = <-requestContent:
+		case request = <-requestChan:
 			break
 		case <-time.After(t):
 			Fail("received no return value")
@@ -62,7 +62,6 @@ func handleRequest(l net.Listener, response chan []byte) {
 		Fail("can not read request")
 	}
 	received := buf[:n]
-	print(received)
 	_, _ = conn.Write([]byte(""))
 	_ = conn.Close()
 	response <- received
