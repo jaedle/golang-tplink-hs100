@@ -24,4 +24,4 @@ tasks:
   upload-coverage:
     silent: true
     cmds:
-    - service=travis-ci
+    - goveralls service=travis-ci
