@@ -14,6 +14,10 @@ Yet another tp-link HS100 library for golang
 
 ## Usage
 
+install library ``go get github.com/jaedle/golang-tplink-hs100``
+
+use the following code as main and replace `YOUR_HS100_DEVICE` with the address of your HS100-device.
+
 ```golang
 package main
 
@@ -24,7 +28,7 @@ import (
 )
 
 func main() {
-	h := hs100.NewHs100("192.168.2.100", configuration.Default())
+	h := hs100.NewHs100("YOUR_HS100_DEVICE", configuration.Default())
 
 	name, err := h.GetName()
 	if err != nil {
@@ -53,9 +57,11 @@ func main() {
 
 ## Project structure
 
-Trying to be as close as possible to [golang standard project layout](https://github.com/golang-standards/project-layout)
+This project tries to stick as close as possible to the [golang standard project layout](https://github.com/golang-standards/project-layout)
 
 The public parts for this library are located in `/pkg`.
+
+All files in `/cmd` are for demo purposes only.
 
 ## License
 
