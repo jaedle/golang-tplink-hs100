@@ -31,21 +31,27 @@ var _ = Describe("Hs100", func() {
 		assertOneCommandSend(s, anIpAddress, turnOffCommand)
 	})
 
-	const readStateCommand = `{"system":{"get_sysinfo":{}}}`
-	It("returns on if device is on", func() {
-		s := &commandSender{
-			response: onResponse(),
-		}
-		hs100 := hs100.NewHs100(anIpAddress, s)
-
-		on, err := hs100.IsOn()
-
-		Expect(err).NotTo(HaveOccurred())
-		assertOneCommandSend(s, anIpAddress, readStateCommand)
-		Expect(on).To(Equal(true))
+	XIt("should consider the return value of send command", func() {
+		//response command is
+		//{"system":{"set_relay_state":{"err_code":0}}}
 	})
 
+	const readStateCommand = `{"system":{"get_sysinfo":{}}}`
+
 	Describe("isOn", func() {
+		It("returns on if device is on", func() {
+			s := &commandSender{
+				response: onResponse(),
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			on, err := hs100.IsOn()
+
+			Expect(err).NotTo(HaveOccurred())
+			assertOneCommandSend(s, anIpAddress, readStateCommand)
+			Expect(on).To(Equal(true))
+		})
+
 		It("returns off if device is off", func() {
 			s := &commandSender{
 				response: offResponse(),
