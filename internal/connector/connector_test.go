@@ -4,7 +4,7 @@ import (
 	"net"
 	"time"
 
-	c "github.com/jaedle/golang-tplink-hs100/internal/connector"
+	"github.com/jaedle/golang-tplink-hs100/internal/connector"
 	"github.com/jaedle/golang-tplink-hs100/internal/crypto"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -12,7 +12,7 @@ import (
 
 var _ = Describe("Connector", func() {
 
-	const aRequest = `{"expected": "command"}}`
+	const aCommand = `{"expected": "command"}}`
 	const aResponse = `{"response": "expected"}}`
 
 	It("sends command", func() {
@@ -21,11 +21,11 @@ var _ = Describe("Connector", func() {
 		request := make(chan []byte)
 		go handleRequest(l, request, crypto.EncryptWithHeader(aResponse))
 
-		_, err := localHostDevice().SendCommand(command(aRequest))
+		_, err := connector.SendCommand("127.0.0.1", aCommand)
 		requestPayload := awaitRequest(request)
 
 		Expect(err).NotTo(HaveOccurred())
-		Expect(requestPayload).To(Equal(crypto.EncryptWithHeader(aRequest)))
+		Expect(requestPayload).To(Equal(crypto.EncryptWithHeader(aCommand)))
 	})
 
 	It("sends command and receives response", func() {
@@ -34,7 +34,7 @@ var _ = Describe("Connector", func() {
 		request := make(chan []byte)
 		go handleRequest(l, request, crypto.EncryptWithHeader(aResponse))
 
-		resp, err := localHostDevice().SendCommand(command(aRequest))
+		resp, err := connector.SendCommand("127.0.0.1", aCommand)
 		awaitRequest(request)
 
 		Expect(err).NotTo(HaveOccurred())
@@ -42,8 +42,7 @@ var _ = Describe("Connector", func() {
 	})
 
 	It("fails if cannot connect", func() {
-		dev := localHostDevice()
-		response, err := dev.SendCommand(command(""))
+		response, err := connector.SendCommand("127.0.0.1", aCommand)
 		Expect(err).To(HaveOccurred())
 		Expect(response).To(BeEmpty())
 	})
@@ -86,12 +85,4 @@ func handleRequest(l net.Listener, request chan []byte, response []byte) {
 	_, _ = conn.Write(response)
 	_ = conn.Close()
 	request <- received
-}
-
-func command(cmd string) c.Command {
-	return c.NewCommand(cmd)
-}
-
-func localHostDevice() c.Device {
-	return c.NewDevice("127.0.0.1")
 }

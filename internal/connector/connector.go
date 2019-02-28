@@ -11,15 +11,15 @@ import (
 
 const devicePort = ":9999"
 
-func (h Device) SendCommand(c Command) (string, error) {
-	conn, err := net.Dial("tcp", h.ipAddress+devicePort)
+func SendCommand(address string, command string) (string, error) {
+	conn, err := net.Dial("tcp", address+devicePort)
 	if err != nil {
 		return "", err
 	}
 	defer conn.Close()
 
 	writer := bufio.NewWriter(conn)
-	_, err = writer.Write(crypto.EncryptWithHeader(c.c))
+	_, err = writer.Write(crypto.EncryptWithHeader(command))
 	if err != nil {
 		return "", err
 	}
@@ -30,24 +30,4 @@ func (h Device) SendCommand(c Command) (string, error) {
 	}
 
 	return crypto.DecryptWithHeader(response), nil
-}
-
-type Command struct {
-	c string
-}
-
-func NewCommand(cmd string) Command {
-	return Command{
-		c: cmd,
-	}
-}
-
-type Device struct {
-	ipAddress string
-}
-
-func NewDevice(ipAddress string) Device {
-	return Device{
-		ipAddress: ipAddress,
-	}
 }

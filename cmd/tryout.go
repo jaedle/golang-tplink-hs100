@@ -1,35 +1,46 @@
 package main
 
 import (
-	"log"
-	"os"
-
 	"github.com/jaedle/golang-tplink-hs100/internal/connector"
+	"github.com/jaedle/golang-tplink-hs100/pkg/hs100"
+	"time"
 )
 
 func main() {
-	dev := connector.NewDevice("192.168.2.100")
-	cmd := connector.NewCommand(`{"system":{"set_relay_state":{"state":1}}}`)
 
-	response, err := dev.SendCommand(cmd)
-	if err != nil {
-		log.Fatal("could not send command")
-		os.Exit(1)
-	}
+	h := hs100.NewHs100("192.168.2.100", &SendCommandConfiguration{})
+	println("Is on:")
+	b, _ := h.IsOn()
+	println(b)
 
-	println("Command was sent")
-	println("Response:")
-	println(response)
+	time.Sleep(2000 * time.Millisecond)
 
-	cmd = connector.NewCommand(`{"system":{"get_sysinfo":{}}}`)
+	println("Turning on")
+	h.TurnOn()
+	println("done")
 
-	response, err = dev.SendCommand(cmd)
-	if err != nil {
-		log.Fatal("could not send command")
-		os.Exit(1)
-	}
+	time.Sleep(2000 * time.Millisecond)
 
-	println("Command was sent")
-	println("Response:")
-	println(response)
+	println("Is on:")
+	b, _ = h.IsOn()
+	println(b)
+
+	time.Sleep(2000 * time.Millisecond)
+
+	println("Turning off")
+	h.TurnOff()
+	println("done")
+
+	time.Sleep(2000 * time.Millisecond)
+
+	println("Is on:")
+	b, _ = h.IsOn()
+	println(b)
+}
+
+type SendCommandConfiguration struct {
+}
+
+func (a *SendCommandConfiguration) SendCommand(addr string, command string) (string, error) {
+	return connector.SendCommand(addr, command)
 }
