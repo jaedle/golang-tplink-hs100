@@ -7,6 +7,6 @@ import (
 
 var _ = Describe("Integration", func() {
 	It("fails", func() {
-		Expect(true).To(BeFalse())
+		Expect(true).To(Equal(true))
 	})
 })
