@@ -9,12 +9,6 @@ import (
 var _ = Describe("Hs100", func() {
 	const anIpAddress = "192.168.2.1"
 
-	It("creates", func() {
-		s := &commandSender{}
-		hs100 := hs100.NewHs100(anIpAddress, s)
-		Expect(hs100.Address).To(Equal(anIpAddress))
-	})
-
 	It("sends turn on command", func() {
 		s := &commandSender{}
 		hs100 := hs100.NewHs100(anIpAddress, s)
