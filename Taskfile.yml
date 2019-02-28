@@ -15,11 +15,15 @@ tasks:
   test:
     silent: true
     cmds:
-    - ginkgo -r -cover
+    - ginkgo -r -cover -skipPackage=integration
   test-watch:
     silent: true
     cmds:
-    - ginkgo watch -r
+    - ginkgo watch -r -skipPackage=integration
+  integration-test:
+    silent: true
+    cmds:
+      - ginkgo test/integration
   lint:
     silent: true
     cmds:
