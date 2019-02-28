@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/jaedle/golang-tplink-hs100/internal/connector"
+	"github.com/jaedle/golang-tplink-hs100/pkg/configuration"
 	"github.com/jaedle/golang-tplink-hs100/pkg/hs100"
 	"time"
 )
 
 func main() {
 
-	h := hs100.NewHs100("192.168.2.100", &SendCommandConfiguration{})
+	h := hs100.NewHs100("192.168.2.100", configuration.DefaultConfiguration())
 	println("Is on:")
 	b, _ := h.IsOn()
 	println(b)
@@ -36,11 +36,4 @@ func main() {
 	println("Is on:")
 	b, _ = h.IsOn()
 	println(b)
-}
-
-type SendCommandConfiguration struct {
-}
-
-func (a *SendCommandConfiguration) SendCommand(addr string, command string) (string, error) {
-	return connector.SendCommand(addr, command)
 }
