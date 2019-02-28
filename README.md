@@ -2,6 +2,12 @@
 
 Yet another tp-link HS100 library for golang
 
+## Project structure
+
+Trying to be as close as possible to [golang standard project layout](https://github.com/golang-standards/project-layout)
+
+The public parts for this library are located in `/pkg`.
+
 ## Badges
 
 [![Build Status](https://travis-ci.com/jaedle/golang-tplink-hs100.svg?branch=master)](https://travis-ci.com/jaedle/golang-tplink-hs100)
