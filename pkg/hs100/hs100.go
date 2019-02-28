@@ -31,13 +31,39 @@ func (hs100 *Hs100) TurnOff() {
 }
 
 func (hs100 *Hs100) IsOn() (bool, error) {
-	resp, _ := hs100.commandSender.SendCommand(hs100.Address, isOnCommand)
+	resp, err := hs100.commandSender.SendCommand(hs100.Address, isOnCommand)
+	if err != nil {
+		return false, err
+	}
+
 	err, on := isOn(resp)
 	if err != nil {
 		return false, err
 	}
 
 	return on, nil
+}
+
+func (hs100 *Hs100) GetName() (string, error) {
+	resp, err := hs100.commandSender.SendCommand(hs100.Address, isOnCommand)
+
+	if err != nil {
+		return "", err
+	}
+
+	err, name := name(resp)
+	if err != nil {
+		return "", err
+	}
+
+	return name, nil
+}
+
+func name(resp string) (error, string) {
+	var r response
+	err := json.Unmarshal([]byte(resp), &r)
+	name := r.System.SystemInfo.Alias
+	return err, name
 }
 
 func isOn(s string) (error, bool) {
@@ -50,7 +76,8 @@ func isOn(s string) (error, bool) {
 type response struct {
 	System struct {
 		SystemInfo struct {
-			RelayState int `json:"relay_state"`
+			RelayState int    `json:"relay_state"`
+			Alias      string `json:"alias"`
 		} `json:"get_sysinfo"`
 	} `json:"system"`
 }

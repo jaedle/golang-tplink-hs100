@@ -1,6 +1,7 @@
 package hs100_test
 
 import (
+	"errors"
 	"github.com/jaedle/golang-tplink-hs100/pkg/hs100"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -8,6 +9,7 @@ import (
 
 var _ = Describe("Hs100", func() {
 	const anIpAddress = "192.168.2.1"
+	const aDeviceName = "some-device-name"
 
 	It("sends turn on command", func() {
 		s := &commandSender{}
@@ -43,30 +45,81 @@ var _ = Describe("Hs100", func() {
 		Expect(on).To(Equal(true))
 	})
 
-	It("returns off if device is off", func() {
-		s := &commandSender{
-			response: offResponse(),
-		}
-		hs100 := hs100.NewHs100(anIpAddress, s)
+	Describe("isOn", func() {
+		It("returns off if device is off", func() {
+			s := &commandSender{
+				response: offResponse(),
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
 
-		on, err := hs100.IsOn()
+			on, err := hs100.IsOn()
 
-		Expect(err).NotTo(HaveOccurred())
-		assertOneCommandSend(s, anIpAddress, readStateCommand)
-		Expect(on).To(Equal(false))
+			Expect(err).NotTo(HaveOccurred())
+			assertOneCommandSend(s, anIpAddress, readStateCommand)
+			Expect(on).To(Equal(false))
+		})
+
+		It("fails on invalid response", func() {
+			s := &commandSender{
+				response: "{]",
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			_, err := hs100.IsOn()
+
+			Expect(err).To(HaveOccurred())
+		})
+
+		It("fails on error on sending the command", func() {
+			s := &commandSender{
+				error: true,
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			_, err := hs100.IsOn()
+
+			Expect(err).To(HaveOccurred())
+		})
 	})
 
-	It("fails on invalid response", func() {
-		s := &commandSender{
-			response: "{]",
-		}
-		hs100 := hs100.NewHs100(anIpAddress, s)
+	Describe("GetName", func() {
+		It("read the device name", func() {
+			s := &commandSender{
+				response: reponseWithName(aDeviceName),
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
 
-		_, err := hs100.IsOn()
+			name, err := hs100.GetName()
 
-		Expect(err).To(HaveOccurred())
+			Expect(err).NotTo(HaveOccurred())
+			assertOneCommandSend(s, anIpAddress, readStateCommand)
+			Expect(name).To(Equal(aDeviceName))
+		})
+
+		It("fails on invalid response", func() {
+			s := &commandSender{
+				response: "{]",
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			name, err := hs100.GetName()
+
+			Expect(err).To(HaveOccurred())
+			Expect(name).To(Equal(""))
+		})
+
+		It("should fail if sending of command fails", func() {
+			s := &commandSender{
+				error: true,
+			}
+
+			hs100 := hs100.NewHs100(anIpAddress, s)
+			name, err := hs100.GetName()
+
+			Expect(err).To(HaveOccurred())
+			Expect(name).To(Equal(""))
+		})
 	})
-
 })
 
 func onResponse() string {
@@ -131,6 +184,37 @@ func offResponse() string {
 		}`
 }
 
+func reponseWithName(name string) string {
+	return `{  
+		   "system":{  
+		      "get_sysinfo":{  
+		         "err_code":0,
+		         "sw_ver":"1.1.4 Build 170417 Rel.145118",
+		         "hw_ver":"1.0",
+		         "type":"IOT.SMARTPLUGSWITCH",
+		         "model":"HS110(EU)",
+		         "mac":"AA:BB:CC:DD:EE:FF",
+		         "deviceId":"1234567890123456789012345678901234567890",
+		         "hwId":"01234567890123456789012345678912",
+		         "fwId":"98765432109876543210987654321032",
+		         "oemId":"ABCDEFABCDEFABCDEFABCDEFABCDEFAB",
+		         "alias":"` + name + `",
+		         "dev_name":"Wi-Fi Smart Plug With Energy Monitoring",
+		         "icon_hash":"",
+		         "relay_state":0,
+		         "on_time":0,
+		         "active_mode":"schedule",
+		         "feature":"TIM:ENE",
+		         "updating":0,
+		         "rssi":-65,
+		         "led_off":0,
+		         "latitude":11.123456,
+		         "longitude":50.123456
+		      }
+		   }
+		}`
+}
+
 func assertOneCommandSend(s *commandSender, address string, command string) {
 	Expect(s.calls).To(Equal(1))
 	Expect(s.address).To(Equal(address))
@@ -142,9 +226,13 @@ type commandSender struct {
 	address  string
 	command  string
 	response string
+	error    bool
 }
 
 func (c *commandSender) SendCommand(addr string, cmd string) (string, error) {
+	if c.error {
+		return "", errors.New("some error")
+	}
 	c.calls++
 	c.address = addr
 	c.command = cmd
