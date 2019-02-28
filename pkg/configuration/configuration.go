@@ -9,6 +9,6 @@ func (a *DefaultSendCommandImplementation) SendCommand(addr string, command stri
 	return connector.SendCommand(addr, command)
 }
 
-func DefaultConfiguration() *DefaultSendCommandImplementation {
+func Default() *DefaultSendCommandImplementation {
 	return &DefaultSendCommandImplementation{}
 }
