@@ -10,6 +10,7 @@ The public parts for this library are located in `/pkg`.
 
 ## Badges
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/bce147bd9ade43cbae3b62157cc75aac)](https://app.codacy.com/app/jaedle/golang-tplink-hs100?utm_source=github.com&utm_medium=referral&utm_content=jaedle/golang-tplink-hs100&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.com/jaedle/golang-tplink-hs100.svg?branch=master)](https://travis-ci.com/jaedle/golang-tplink-hs100)
 [![Coverage Status](https://coveralls.io/repos/github/jaedle/golang-tplink-hs100/badge.svg?branch=master)](https://coveralls.io/github/jaedle/golang-tplink-hs100?branch=master)
 [![GolangCI](https://golangci.com/badges/github.com/jaedle/golang-tplink-hs100.svg)](https://golangci.com)
