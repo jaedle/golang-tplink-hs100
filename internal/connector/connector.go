@@ -2,14 +2,15 @@ package connector
 
 import (
 	"bufio"
-	"fmt"
-	"io/ioutil"
+	"encoding/binary"
+	"io"
 	"net"
 
 	"github.com/jaedle/golang-tplink-hs100/internal/crypto"
 )
 
 const devicePort = ":9999"
+const headerLength = 4
 
 func SendCommand(address string, command string) (string, error) {
 	conn, err := net.Dial("tcp", address+devicePort)
@@ -24,10 +25,35 @@ func SendCommand(address string, command string) (string, error) {
 		return "", err
 	}
 	writer.Flush()
-	response, err := ioutil.ReadAll(conn)
+
+	response, err := readHeader(conn, err)
 	if err != nil {
-		fmt.Println("Could not receive response", err)
+		return "", err
 	}
 
-	return crypto.DecryptWithHeader(response), nil
+	payload, err := readPayload(conn, payloadLength(response), err)
+	if err != nil {
+		return "", err
+	}
+
+	return crypto.Decrypt(payload), nil
+}
+
+func readHeader(conn net.Conn, err error) ([]byte, error) {
+	headerReader := io.LimitReader(conn, int64(headerLength))
+	var response = make([]byte, headerLength, headerLength)
+	_, err = headerReader.Read(response)
+	return response, err
+}
+
+func readPayload(conn net.Conn, length uint32, err error) ([]byte, error) {
+	payloadReader := io.LimitReader(conn, int64(length))
+	var payload = make([]byte, length, length)
+	_, err = payloadReader.Read(payload)
+	return payload, err
+}
+
+func payloadLength(header []byte) uint32 {
+	payloadLength := binary.BigEndian.Uint32(header)
+	return payloadLength
 }

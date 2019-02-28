@@ -1,0 +1,16 @@
+{
+  "name": "device-simulation",
+  "version": "1.0.0",
+  "description": "simulation of tplink devices for golang-tplink-hs100 library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "jaedle (Dennis Jekubczyk)",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "tplink-smarthome-simulator": "^1.10.0"
+  }
+}
