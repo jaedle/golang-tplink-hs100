@@ -11,36 +11,57 @@ import (
 )
 
 var _ = Describe("Connector", func() {
-	const t = 1 * time.Second
 
-	It("sends expected command", func() {
+	const aRequest = `{"expected": "command"}}`
+	const aResponse = `{"response": "expected"}}`
+
+	It("sends command", func() {
 		l := startServer()
 		defer l.Close()
+		request := make(chan []byte)
+		go handleRequest(l, request, crypto.EncryptWithHeader(aResponse))
 
-		requestChan := make(chan []byte)
-		go handleRequest(l, requestChan)
-		dev := localHostDevice()
+		_, err := localHostDevice().SendCommand(command(aRequest))
+		requestPayload := awaitRequest(request)
 
-		err := dev.SendCommand(command(`{"expected": "command"}}`))
-
-		var request []byte
-		select {
-		case request = <-requestChan:
-			break
-		case <-time.After(t):
-			Fail("received no return value")
-		}
-
-		Expect(request).To(Equal(crypto.EncryptWithHeader(`{"expected": "command"}}`)))
 		Expect(err).NotTo(HaveOccurred())
+		Expect(requestPayload).To(Equal(crypto.EncryptWithHeader(aRequest)))
+	})
+
+	It("sends command and receives response", func() {
+		l := startServer()
+		defer l.Close()
+		request := make(chan []byte)
+		go handleRequest(l, request, crypto.EncryptWithHeader(aResponse))
+
+		resp, err := localHostDevice().SendCommand(command(aRequest))
+		awaitRequest(request)
+
+		Expect(err).NotTo(HaveOccurred())
+		Expect(resp).To(Equal(aResponse))
 	})
 
 	It("fails if cannot connect", func() {
 		dev := localHostDevice()
-		err := dev.SendCommand(command(""))
+		response, err := dev.SendCommand(command(""))
 		Expect(err).To(HaveOccurred())
+		Expect(response).To(BeEmpty())
 	})
 })
+
+func awaitRequest(requestChan chan []byte) []byte {
+	const t = 1 * time.Second
+
+	var request []byte
+	select {
+	case request = <-requestChan:
+		break
+	case <-time.After(t):
+		Fail("received no return value")
+	}
+
+	return request
+}
 
 func startServer() net.Listener {
 	l, err := net.Listen("tcp", ":9999")
@@ -50,7 +71,7 @@ func startServer() net.Listener {
 	return l
 }
 
-func handleRequest(l net.Listener, response chan []byte) {
+func handleRequest(l net.Listener, request chan []byte, response []byte) {
 	conn, err := l.Accept()
 	if err != nil {
 		Fail("can not start server")
@@ -62,9 +83,9 @@ func handleRequest(l net.Listener, response chan []byte) {
 		Fail("can not read request")
 	}
 	received := buf[:n]
-	_, _ = conn.Write([]byte(""))
+	_, _ = conn.Write(response)
 	_ = conn.Close()
-	response <- received
+	request <- received
 }
 
 func command(cmd string) c.Command {

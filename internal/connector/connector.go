@@ -2,6 +2,8 @@ package connector
 
 import (
 	"bufio"
+	"fmt"
+	"io/ioutil"
 	"net"
 
 	"github.com/jaedle/golang-tplink-hs100/internal/crypto"
@@ -9,20 +11,25 @@ import (
 
 const devicePort = ":9999"
 
-func (h Device) SendCommand(c Command) error {
+func (h Device) SendCommand(c Command) (string, error) {
 	conn, err := net.Dial("tcp", h.ipAddress+devicePort)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer conn.Close()
 
 	writer := bufio.NewWriter(conn)
 	_, err = writer.Write(crypto.EncryptWithHeader(c.c))
 	if err != nil {
-		return err
+		return "", err
 	}
 	writer.Flush()
-	return nil
+	response, err := ioutil.ReadAll(conn)
+	if err != nil {
+		fmt.Println("Could not receive response", err)
+	}
+
+	return crypto.DecryptWithHeader(response), nil
 }
 
 type Command struct {
