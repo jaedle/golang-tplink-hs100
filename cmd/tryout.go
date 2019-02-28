@@ -9,6 +9,13 @@ import (
 func main() {
 
 	h := hs100.NewHs100("192.168.2.100", configuration.Default())
+
+	println("Name of device:")
+	name, _ := h.GetName()
+	println(name)
+
+	time.Sleep(2000 * time.Millisecond)
+
 	println("Is on:")
 	b, _ := h.IsOn()
 	println(b)
