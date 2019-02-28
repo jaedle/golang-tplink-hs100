@@ -9,7 +9,7 @@ import (
 
 var _ = Describe("Integration", func() {
 	It("fails", func() {
-		h := hs100.NewHs100("localhost", configuration.Default())
+		h := hs100.NewHs100("127.0.0.1", configuration.Default())
 		isOn, err := h.IsOn()
 		Expect(err).NotTo(HaveOccurred())
 		Expect(isOn).To(BeFalse())
