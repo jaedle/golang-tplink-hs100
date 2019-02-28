@@ -2,6 +2,8 @@ package hs100
 
 const turnOnCommand = `{"system":{"set_relay_state":{"state":1}}}`
 const turnOffCommand = `{"system":{"set_relay_state":{"state":0}}}`
+const isOnCommand = `{"system":{"get_sysinfo":{}}}`
+
 
 type Hs100 struct {
 	Address string
@@ -25,4 +27,9 @@ func (hs100 *Hs100) TurnOn() {
 
 func (hs100 *Hs100) TurnOff() {
 	_ = hs100.commandSender.SendCommand(hs100.Address, turnOffCommand)
+}
+
+func (hs100 *Hs100) IsOn() bool {
+	_ = hs100.commandSender.SendCommand(hs100.Address, isOnCommand)
+	return true
 }

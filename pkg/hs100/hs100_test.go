@@ -30,6 +30,17 @@ var _ = Describe("Hs100", func() {
 		assertOneCommandSend(s, anIpAddress, turnOffCommand)
 	})
 
+	It("asks for power state", func() {
+		s := &commandSender{}
+		hs100 := hs100.NewHs100(anIpAddress, s)
+
+		on := hs100.IsOn()
+
+		const isOnCommand = `{"system":{"get_sysinfo":{}}}`
+		assertOneCommandSend(s, anIpAddress, isOnCommand)
+		Expect(on).To(Equal(true))
+	})
+
 })
 
 func assertOneCommandSend(s *commandSender, address string, command string) {
