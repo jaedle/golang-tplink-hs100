@@ -34,6 +34,7 @@ tasks:
       - task: build-device-simulation-image
       - task: start-device-simulation-container
       - ginkgo test/integration
+      - task: stop-device-simulation-container
   build-device-simulation-image:
     dir: test/device-simulation
     silent: true
@@ -47,7 +48,7 @@ tasks:
   stop-device-simulation-container:
     silent: true
     cmds:
-      - docker container rm -f tplink-device-simulation  &>> /dev/null || true
+      - docker container rm -f tplink-device-simulation &>> /dev/null || true
   lint:
     silent: true
     cmds:
