@@ -26,12 +26,12 @@ func SendCommand(address string, command string) (string, error) {
 	}
 	writer.Flush()
 
-	response, err := readHeader(conn, err)
+	response, err := readHeader(conn)
 	if err != nil {
 		return "", err
 	}
 
-	payload, err := readPayload(conn, payloadLength(response), err)
+	payload, err := readPayload(conn, payloadLength(response))
 	if err != nil {
 		return "", err
 	}
@@ -39,17 +39,17 @@ func SendCommand(address string, command string) (string, error) {
 	return crypto.Decrypt(payload), nil
 }
 
-func readHeader(conn net.Conn, err error) ([]byte, error) {
+func readHeader(conn net.Conn) ([]byte, error) {
 	headerReader := io.LimitReader(conn, int64(headerLength))
-	var response = make([]byte, headerLength, headerLength)
-	_, err = headerReader.Read(response)
+	var response = make([]byte, headerLength)
+	_, err := headerReader.Read(response)
 	return response, err
 }
 
-func readPayload(conn net.Conn, length uint32, err error) ([]byte, error) {
+func readPayload(conn net.Conn, length uint32) ([]byte, error) {
 	payloadReader := io.LimitReader(conn, int64(length))
-	var payload = make([]byte, length, length)
-	_, err = payloadReader.Read(payload)
+	var payload = make([]byte, length)
+	_, err := payloadReader.Read(payload)
 	return payload, err
 }
 
