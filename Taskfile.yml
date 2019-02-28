@@ -12,14 +12,42 @@ tasks:
     silent: true
     cmds:
     - go mod download
+  world:
+    silent: true
+    cmds:
+      - task: test
+      - task: integration-test
+      - task: lint
   test:
+    deps: [stop-device-simulation-container]
     silent: true
     cmds:
-    - ginkgo -r -cover
+    - ginkgo -r -cover -skipPackage=integration
   test-watch:
+    deps: [stop-device-simulation-container]
     silent: true
     cmds:
-    - ginkgo watch -r
+    - ginkgo watch -r -skipPackage=integration
+  integration-test:
+    silent: true
+    cmds:
+      - task: build-device-simulation-image
+      - task: start-device-simulation-container
+      - ginkgo test/integration
+  build-device-simulation-image:
+    dir: test/device-simulation
+    silent: true
+    cmds:
+      - docker image build -t golang-tplink-hs100:device-simulation . >> /dev/null
+  start-device-simulation-container:
+    deps: [stop-device-simulation-container]
+    silent: true
+    cmds:
+      - docker container run -e DEBUG=* -p 9999:9999 --name tplink-device-simulation --rm -d golang-tplink-hs100:device-simulation >> /dev/null
+  stop-device-simulation-container:
+    silent: true
+    cmds:
+      - docker container rm -f tplink-device-simulation  &>> /dev/null || true
   lint:
     silent: true
     cmds:

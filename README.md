@@ -2,12 +2,6 @@
 
 Yet another tp-link HS100 library for golang
 
-## Project structure
-
-Trying to be as close as possible to [golang standard project layout](https://github.com/golang-standards/project-layout)
-
-The public parts for this library are located in `/pkg`.
-
 ## Badges
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/bce147bd9ade43cbae3b62157cc75aac)](https://app.codacy.com/app/jaedle/golang-tplink-hs100?utm_source=github.com&utm_medium=referral&utm_content=jaedle/golang-tplink-hs100&utm_campaign=Badge_Grade_Dashboard)
@@ -18,11 +12,51 @@ The public parts for this library are located in `/pkg`.
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=golang-tplink-hs100&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=golang-tplink-hs100)
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=golang-tplink-hs100&metric=sqale_index)](https://sonarcloud.io/dashboard?id=golang-tplink-hs100)
 
+## Usage
+
+```golang
+package main
+
+import (
+	"github.com/jaedle/golang-tplink-hs100/pkg/configuration"
+	"github.com/jaedle/golang-tplink-hs100/pkg/hs100"
+	"os"
+)
+
+func main() {
+	h := hs100.NewHs100("192.168.2.100", configuration.Default())
+
+	name, err := h.GetName()
+	if err != nil {
+		println("Error on accessing device")
+		os.Exit(1)
+	}
+
+	println("Name of device: " + name)
+}
+```
+
 ## Acknowledgements
 
 - [tplink-smarthome-api](https://github.com/plasticrake/tplink-smarthome-api): Thanks for the inspiration!
 - [tplink-smarthome-crypto](https://github.com/plasticrake/tplink-smarthome-crypto) Thanks for the excellent documentation/test-cases for encrypting/decrypting the communication
+- [tplink-smarthome-simulator](https://github.com/plasticrake/tplink-smarthome-simulator) Thanks for providing a device simulator for integration tests!
 - [hs1xxplug](https://github.com/sausheong/hs1xxplug): Thanks for the blueprint in golang!
+
+
+## Development
+
+### Prerequisites
+
+1. go-task 
+2. docker 
+
+## Project structure
+
+Trying to be as close as possible to [golang standard project layout](https://github.com/golang-standards/project-layout)
+
+The public parts for this library are located in `/pkg`.
+
 ## License
 
 [MIT](https://github.com/jaedle/golang-tplink-hs100/blob/master/LICENSE)

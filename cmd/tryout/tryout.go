@@ -8,7 +8,7 @@ import (
 
 func main() {
 
-	h := hs100.NewHs100("192.168.2.100", configuration.Default())
+	h := hs100.NewHs100("localhost", configuration.Default())
 
 	println("Name of device:")
 	name, _ := h.GetName()

@@ -20,6 +20,7 @@ install:
 - task install
 script:
 - task test
+- task integration-test
 - task lint
 - task coveralls-analysis
 - task sonar-analysis
