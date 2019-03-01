@@ -68,16 +68,7 @@ func (hs100 *Hs100) GetCurrentPowerConsumption() (PowerConsumption, error) {
 	if err != nil {
 		return PowerConsumption{}, errors.Wrap(err, "Could not read from hs100 device")
 	}
-
-	var r powerConsumptionResponse
-	err = json.Unmarshal([]byte(resp), &r)
-	if err != nil {
-		return PowerConsumption{}, errors.Wrap(err, "Cannot parse response")
-	}
-
-	return PowerConsumption{
-		Current: r.Emeter.RealTime.Current,
-	}, nil
+	return powerConsumption(resp)
 }
 
 func name(resp string) (error, string) {
@@ -92,6 +83,20 @@ func isOn(s string) (error, bool) {
 	err := json.Unmarshal([]byte(s), &r)
 	on := r.System.SystemInfo.RelayState == 1
 	return err, on
+}
+
+func powerConsumption(resp string) (PowerConsumption, error) {
+	var r powerConsumptionResponse
+	err := json.Unmarshal([]byte(resp), &r)
+	consumption := PowerConsumption{}
+	if err != nil {
+		return consumption, errors.Wrap(err, "Cannot parse response")
+	} else {
+		consumption = PowerConsumption{
+			Current: r.Emeter.RealTime.Current,
+		}
+		return consumption, nil
+	}
 }
 
 type response struct {
