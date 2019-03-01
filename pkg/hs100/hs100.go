@@ -1,10 +1,13 @@
 package hs100
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 const turnOnCommand = `{"system":{"set_relay_state":{"state":1}}}`
 const turnOffCommand = `{"system":{"set_relay_state":{"state":0}}}`
 const isOnCommand = `{"system":{"get_sysinfo":{}}}`
+const currentPowerConsumptionCommand = `{"emeter":{"get_realtime":{},"get_vgain_igain":{}}}`
 
 type Hs100 struct {
 	Address       string
@@ -59,6 +62,17 @@ func (hs100 *Hs100) GetName() (string, error) {
 	return name, nil
 }
 
+func (hs100 *Hs100) GetCurrentPowerConsumption() (PowerConsumption, error) {
+	resp, _ := hs100.commandSender.SendCommand(hs100.Address, currentPowerConsumptionCommand)
+
+	var r powerConsumptionResponse
+	json.Unmarshal([]byte(resp), &r)
+
+	return PowerConsumption{
+		Current: r.Emeter.RealTime.Current,
+	}, nil
+}
+
 func name(resp string) (error, string) {
 	var r response
 	err := json.Unmarshal([]byte(resp), &r)
@@ -80,4 +94,16 @@ type response struct {
 			Alias      string `json:"alias"`
 		} `json:"get_sysinfo"`
 	} `json:"system"`
+}
+
+type powerConsumptionResponse struct {
+	Emeter struct {
+		RealTime struct {
+			Current float32 `json:"current"`
+		} `json:"get_realtime"`
+	} `json:"emeter"`
+}
+
+type PowerConsumption struct {
+	Current float32
 }

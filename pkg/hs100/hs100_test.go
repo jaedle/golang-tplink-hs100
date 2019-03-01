@@ -37,6 +37,7 @@ var _ = Describe("Hs100", func() {
 	})
 
 	const readStateCommand = `{"system":{"get_sysinfo":{}}}`
+	const readCurrentPowerConsumptionCommand = `{"emeter":{"get_realtime":{},"get_vgain_igain":{}}}`
 
 	Describe("isOn", func() {
 		It("returns on if device is on", func() {
@@ -126,7 +127,44 @@ var _ = Describe("Hs100", func() {
 			Expect(name).To(Equal(""))
 		})
 	})
+
+	Describe("currentPowerConsumption", func() {
+		It("reads the current power consumption", func() {
+			s := &commandSender{
+				response: currentPowerConsumptionResponse(
+					"1.2345678",
+				),
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			powerConsumption, err := hs100.GetCurrentPowerConsumption()
+
+			Expect(err).NotTo(HaveOccurred())
+			assertOneCommandSend(s, anIpAddress, readCurrentPowerConsumptionCommand)
+			Expect(powerConsumption.Current).To(BeNumerically("~", 1.2345678, 0.001))
+		})
+	})
 })
+
+func currentPowerConsumptionResponse(current string) string {
+	return `
+{  
+   "emeter":{  
+      "get_realtime":{  
+         "current":` + current + `,
+         "voltage":230.123456,
+         "power":284.103008,
+         "total":52.859000,
+         "err_code":0
+      },
+      "get_vgain_igain":{  
+         "vgain":13290,
+         "igain":16887,
+         "err_code":0
+      }
+   }
+}`
+}
 
 func onResponse() string {
 	return `{  
@@ -222,9 +260,9 @@ func reponseWithName(name string) string {
 }
 
 func assertOneCommandSend(s *commandSender, address string, command string) {
-	Expect(s.calls).To(Equal(1))
-	Expect(s.address).To(Equal(address))
-	Expect(s.command).To(Equal(command))
+	Expect(s.calls).To(Equal(1), "no command send to device")
+	Expect(s.address).To(Equal(address), "wrong ip address for device")
+	Expect(s.command).To(Equal(command), "wrong command sent to device")
 }
 
 type commandSender struct {
