@@ -61,8 +61,8 @@ type turnOnResponse struct {
 }
 
 func (hs100 *Hs100) TurnOff() error {
-	_, _ = hs100.commandSender.SendCommand(hs100.Address, turnOffCommand)
-	return nil
+	_, err := hs100.commandSender.SendCommand(hs100.Address, turnOffCommand)
+	return err
 }
 
 func (hs100 *Hs100) IsOn() (bool, error) {

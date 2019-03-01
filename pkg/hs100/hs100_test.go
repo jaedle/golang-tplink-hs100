@@ -67,6 +67,16 @@ var _ = Describe("Hs100", func() {
 			Expect(err).NotTo(HaveOccurred())
 			assertOneCommandSend(s, anIpAddress, turnOffCommand)
 		})
+
+		It("fails if sending command failed", func() {
+			s := &commandSender{
+				error: true,
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			err := hs100.TurnOff()
+			Expect(err).To(HaveOccurred())
+		})
 	})
 
 	const readStateCommand = `{"system":{"get_sysinfo":{}}}`
