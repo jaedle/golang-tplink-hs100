@@ -143,6 +143,30 @@ var _ = Describe("Hs100", func() {
 			assertOneCommandSend(s, anIpAddress, readCurrentPowerConsumptionCommand)
 			Expect(powerConsumption.Current).To(BeNumerically("~", 1.2345678, 0.001))
 		})
+
+		It("fails if communication with device is not succesful", func() {
+			s := &commandSender{
+				error: true,
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			powerConsumption, err := hs100.GetCurrentPowerConsumption()
+
+			Expect(err).To(HaveOccurred())
+			Expect(powerConsumption).To(BeZero())
+		})
+
+		It("fails if response is invalid", func() {
+			s := &commandSender{
+				response: "{]",
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			powerConsumption, err := hs100.GetCurrentPowerConsumption()
+
+			Expect(err).To(HaveOccurred())
+			Expect(powerConsumption).To(BeZero())
+		})
 	})
 })
 

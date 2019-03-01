@@ -2,6 +2,7 @@ package hs100
 
 import (
 	"encoding/json"
+	"github.com/pkg/errors"
 )
 
 const turnOnCommand = `{"system":{"set_relay_state":{"state":1}}}`
@@ -63,10 +64,16 @@ func (hs100 *Hs100) GetName() (string, error) {
 }
 
 func (hs100 *Hs100) GetCurrentPowerConsumption() (PowerConsumption, error) {
-	resp, _ := hs100.commandSender.SendCommand(hs100.Address, currentPowerConsumptionCommand)
+	resp, err := hs100.commandSender.SendCommand(hs100.Address, currentPowerConsumptionCommand)
+	if err != nil {
+		return PowerConsumption{}, errors.Wrap(err, "Could not read from hs100 device")
+	}
 
 	var r powerConsumptionResponse
-	json.Unmarshal([]byte(resp), &r)
+	err = json.Unmarshal([]byte(resp), &r)
+	if err != nil {
+		return PowerConsumption{}, errors.Wrap(err, "Cannot parse response")
+	}
 
 	return PowerConsumption{
 		Current: r.Emeter.RealTime.Current,
