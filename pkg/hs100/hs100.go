@@ -106,15 +106,7 @@ func powerConsumption(resp string) (PowerConsumption, error) {
 	if err != nil {
 		return PowerConsumption{}, errors.Wrap(err, "Cannot parse response")
 	} else {
-		return toPowerConsumption(r), nil
-	}
-}
-
-func toPowerConsumption(r powerConsumptionResponse) PowerConsumption {
-	return PowerConsumption{
-		Current: r.Emeter.RealTime.Current,
-		Voltage: r.Emeter.RealTime.Voltage,
-		Power:   r.Emeter.RealTime.Power,
+		return r.toPowerConsumption(), nil
 	}
 }
 
@@ -126,4 +118,12 @@ type powerConsumptionResponse struct {
 			Power   float32 `json:"power"`
 		} `json:"get_realtime"`
 	} `json:"emeter"`
+}
+
+func (r *powerConsumptionResponse) toPowerConsumption() PowerConsumption {
+	return PowerConsumption{
+		Current: r.Emeter.RealTime.Current,
+		Voltage: r.Emeter.RealTime.Voltage,
+		Power:   r.Emeter.RealTime.Power,
+	}
 }
