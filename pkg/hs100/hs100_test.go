@@ -11,29 +11,94 @@ var _ = Describe("Hs100", func() {
 	const anIpAddress = "192.168.2.1"
 	const aDeviceName = "some-device-name"
 
-	It("sends turn on command", func() {
-		s := &commandSender{}
-		hs100 := hs100.NewHs100(anIpAddress, s)
-
-		hs100.TurnOn()
-
+	Describe("turnOn", func() {
 		const turnOnCommand = `{"system":{"set_relay_state":{"state":1}}}`
-		assertOneCommandSend(s, anIpAddress, turnOnCommand)
+		It("sends turn on command", func() {
+			s := &commandSender{
+				response: `{"system":{"set_relay_state":{"err_code":0}}}`,
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			err := hs100.TurnOn()
+
+			Expect(err).NotTo(HaveOccurred())
+			assertOneCommandSend(s, anIpAddress, turnOnCommand)
+		})
+
+		It("fails if sending command failed", func() {
+			s := &commandSender{
+				error: true,
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			err := hs100.TurnOn()
+			Expect(err).To(HaveOccurred())
+		})
+
+		It("fails if error code is non zero", func() {
+			s := &commandSender{
+				response: `{"system":{"set_relay_state":{"err_code":-3}}}`,
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			err := hs100.TurnOn()
+			Expect(err).To(HaveOccurred())
+		})
+
+		It("fails if response is invalid", func() {
+			s := &commandSender{
+				response: "[}",
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			err := hs100.TurnOn()
+			Expect(err).To(HaveOccurred())
+		})
 	})
 
-	It("sends turn off command", func() {
-		s := &commandSender{}
-		hs100 := hs100.NewHs100(anIpAddress, s)
-
-		hs100.TurnOff()
-
+	Describe("turnOn", func() {
 		const turnOffCommand = `{"system":{"set_relay_state":{"state":0}}}`
-		assertOneCommandSend(s, anIpAddress, turnOffCommand)
-	})
+		It("sends turn off command", func() {
+			s := &commandSender{
+				response: `{"system":{"set_relay_state":{"err_code":0}}}`,
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
 
-	XIt("should consider the return value of send command", func() {
-		//response command is
-		//{"system":{"set_relay_state":{"err_code":0}}}
+			err := hs100.TurnOff()
+
+			Expect(err).NotTo(HaveOccurred())
+			assertOneCommandSend(s, anIpAddress, turnOffCommand)
+		})
+
+		It("fails if sending command failed", func() {
+			s := &commandSender{
+				error: true,
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			err := hs100.TurnOff()
+			Expect(err).To(HaveOccurred())
+		})
+
+		It("fails if error code is non zero", func() {
+			s := &commandSender{
+				response: `{"system":{"set_relay_state":{"err_code":-3}}}`,
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			err := hs100.TurnOff()
+			Expect(err).To(HaveOccurred())
+		})
+
+		It("fails if response is invalid", func() {
+			s := &commandSender{
+				response: "[}",
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			err := hs100.TurnOff()
+			Expect(err).To(HaveOccurred())
+		})
 	})
 
 	const readStateCommand = `{"system":{"get_sysinfo":{}}}`

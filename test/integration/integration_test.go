@@ -14,7 +14,9 @@ var _ = Describe("Integration", func() {
 		Expect(err).NotTo(HaveOccurred())
 		Expect(isOn).To(BeFalse())
 
-		h.TurnOn()
+		err = h.TurnOn()
+		Expect(err).NotTo(HaveOccurred())
+
 		isOn, err = h.IsOn()
 		Expect(err).NotTo(HaveOccurred())
 		Expect(isOn).To(BeTrue())

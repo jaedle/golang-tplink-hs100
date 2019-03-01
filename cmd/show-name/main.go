@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/jaedle/golang-tplink-hs100/pkg/configuration"
 	"github.com/jaedle/golang-tplink-hs100/pkg/hs100"
+	"log"
 	"os"
 )
 
@@ -11,9 +12,9 @@ func main() {
 
 	name, err := h.GetName()
 	if err != nil {
-		println("Error on accessing device")
+		log.Print("Error on accessing device")
 		os.Exit(1)
 	}
 
-	println("Name of device: " + name)
+	log.Printf("Name of device: %s", name)
 }
