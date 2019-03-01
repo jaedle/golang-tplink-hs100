@@ -27,12 +27,37 @@ type CommandSender interface {
 }
 
 func (hs100 *Hs100) TurnOn() error {
-	_, err := hs100.commandSender.SendCommand(hs100.Address, turnOnCommand)
+	resp, err := hs100.commandSender.SendCommand(hs100.Address, turnOnCommand)
 	if err != nil {
 		return errors.Wrap(err, "error on sending turn on command for device")
 	}
 
+	r, err := parseOnResponse(resp)
+	if err != nil {
+		return errors.Wrap(err, "Could not parse response from device")
+	} else if r.errorOccurred() {
+		return errors.New("got non zero exit code from device")
+	}
+
 	return nil
+}
+
+func parseOnResponse(response string) (turnOnResponse, error) {
+	var result turnOnResponse
+	err := json.Unmarshal([]byte(response), &result)
+	return result, err
+}
+
+func (r *turnOnResponse) errorOccurred() bool {
+	return r.System.SetRelayState.ErrorCode != 0
+}
+
+type turnOnResponse struct {
+	System struct {
+		SetRelayState struct {
+			ErrorCode int `json:"err_code"`
+		} `json:"set_relay_state"`
+	} `json:"system"`
 }
 
 func (hs100 *Hs100) TurnOff() {
