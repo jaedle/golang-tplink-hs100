@@ -83,6 +83,5 @@ func handleRequest(l net.Listener, request chan []byte, response []byte) {
 	}
 	received := buf[:n]
 	_, _ = conn.Write(response)
-	//_ = conn.Close()
 	request <- received
 }
