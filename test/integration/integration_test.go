@@ -18,5 +18,9 @@ var _ = Describe("Integration", func() {
 		isOn, err = h.IsOn()
 		Expect(err).NotTo(HaveOccurred())
 		Expect(isOn).To(BeTrue())
+
+		consumption, err := h.GetCurrentPowerConsumption()
+		Expect(err).NotTo(HaveOccurred())
+		Expect(consumption).NotTo(BeZero())
 	})
 })
