@@ -59,7 +59,9 @@ var _ = Describe("Hs100", func() {
 	Describe("turnOn", func() {
 		const turnOffCommand = `{"system":{"set_relay_state":{"state":0}}}`
 		It("sends turn off command", func() {
-			s := &commandSender{}
+			s := &commandSender{
+				response: `{"system":{"set_relay_state":{"err_code":0}}}`,
+			}
 			hs100 := hs100.NewHs100(anIpAddress, s)
 
 			err := hs100.TurnOff()
@@ -71,6 +73,26 @@ var _ = Describe("Hs100", func() {
 		It("fails if sending command failed", func() {
 			s := &commandSender{
 				error: true,
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			err := hs100.TurnOff()
+			Expect(err).To(HaveOccurred())
+		})
+
+		It("fails if error code is non zero", func() {
+			s := &commandSender{
+				response: `{"system":{"set_relay_state":{"err_code":-3}}}`,
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			err := hs100.TurnOff()
+			Expect(err).To(HaveOccurred())
+		})
+
+		It("fails if response is invalid", func() {
+			s := &commandSender{
+				response: "[}",
 			}
 			hs100 := hs100.NewHs100(anIpAddress, s)
 

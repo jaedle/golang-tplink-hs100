@@ -32,7 +32,7 @@ func (hs100 *Hs100) TurnOn() error {
 		return errors.Wrap(err, "error on sending turn on command for device")
 	}
 
-	r, err := parseOnResponse(resp)
+	r, err := parseSetRelayResponse(resp)
 	if err != nil {
 		return errors.Wrap(err, "Could not parse response from device")
 	} else if r.errorOccurred() {
@@ -42,17 +42,17 @@ func (hs100 *Hs100) TurnOn() error {
 	return nil
 }
 
-func parseOnResponse(response string) (turnOnResponse, error) {
-	var result turnOnResponse
+func parseSetRelayResponse(response string) (setRelayResponse, error) {
+	var result setRelayResponse
 	err := json.Unmarshal([]byte(response), &result)
 	return result, err
 }
 
-func (r *turnOnResponse) errorOccurred() bool {
+func (r *setRelayResponse) errorOccurred() bool {
 	return r.System.SetRelayState.ErrorCode != 0
 }
 
-type turnOnResponse struct {
+type setRelayResponse struct {
 	System struct {
 		SetRelayState struct {
 			ErrorCode int `json:"err_code"`
@@ -61,8 +61,19 @@ type turnOnResponse struct {
 }
 
 func (hs100 *Hs100) TurnOff() error {
-	_, err := hs100.commandSender.SendCommand(hs100.Address, turnOffCommand)
-	return err
+	resp, err := hs100.commandSender.SendCommand(hs100.Address, turnOffCommand)
+	if err != nil {
+		return errors.Wrap(err, "error on sending turn on command for device")
+	}
+
+	r, err := parseSetRelayResponse(resp)
+	if err != nil {
+		return errors.Wrap(err, "Could not parse response from device")
+	} else if r.errorOccurred() {
+		return errors.New("got non zero exit code from device")
+	}
+
+	return nil
 }
 
 func (hs100 *Hs100) IsOn() (bool, error) {
