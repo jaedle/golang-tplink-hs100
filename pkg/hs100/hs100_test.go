@@ -22,6 +22,17 @@ var _ = Describe("Hs100", func() {
 			Expect(err).NotTo(HaveOccurred())
 			assertOneCommandSend(s, anIpAddress, turnOnCommand)
 		})
+
+		It("fails if sending command failed", func() {
+			s := &commandSender{
+				error: true,
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			err := hs100.TurnOn()
+			Expect(err).To(HaveOccurred())
+		})
+
 	})
 
 	It("sends turn off command", func() {

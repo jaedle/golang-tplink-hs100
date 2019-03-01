@@ -27,7 +27,11 @@ type CommandSender interface {
 }
 
 func (hs100 *Hs100) TurnOn() error {
-	_, _ = hs100.commandSender.SendCommand(hs100.Address, turnOnCommand)
+	_, err := hs100.commandSender.SendCommand(hs100.Address, turnOnCommand)
+	if err != nil {
+		return errors.Wrap(err, "error on sending turn on command for device")
+	}
+
 	return nil
 }
 

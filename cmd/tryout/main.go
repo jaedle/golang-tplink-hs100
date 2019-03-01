@@ -23,7 +23,7 @@ func main() {
 	time.Sleep(2000 * time.Millisecond)
 
 	println("Turning on")
-	h.TurnOn()
+	_ = h.TurnOn()
 	println("done")
 
 	time.Sleep(2000 * time.Millisecond)
