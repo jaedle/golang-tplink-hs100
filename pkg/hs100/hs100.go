@@ -97,20 +97,24 @@ func (hs100 *Hs100) GetCurrentPowerConsumption() (PowerConsumption, error) {
 type PowerConsumption struct {
 	Current float32
 	Voltage float32
+	Power   float32
 }
 
 func powerConsumption(resp string) (PowerConsumption, error) {
 	var r powerConsumptionResponse
 	err := json.Unmarshal([]byte(resp), &r)
-	consumption := PowerConsumption{}
 	if err != nil {
-		return consumption, errors.Wrap(err, "Cannot parse response")
+		return PowerConsumption{}, errors.Wrap(err, "Cannot parse response")
 	} else {
-		consumption = PowerConsumption{
-			Current: r.Emeter.RealTime.Current,
-			Voltage: r.Emeter.RealTime.Voltage,
-		}
-		return consumption, nil
+		return toPowerConsumption(r), nil
+	}
+}
+
+func toPowerConsumption(r powerConsumptionResponse) PowerConsumption {
+	return PowerConsumption{
+		Current: r.Emeter.RealTime.Current,
+		Voltage: r.Emeter.RealTime.Voltage,
+		Power:   r.Emeter.RealTime.Power,
 	}
 }
 
@@ -119,6 +123,7 @@ type powerConsumptionResponse struct {
 		RealTime struct {
 			Current float32 `json:"current"`
 			Voltage float32 `json:"voltage"`
+			Power   float32 `json:"power"`
 		} `json:"get_realtime"`
 	} `json:"emeter"`
 }
