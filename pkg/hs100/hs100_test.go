@@ -57,16 +57,18 @@ var _ = Describe("Hs100", func() {
 	})
 
 	Describe("turnOn", func() {
-		const turnOffCommand= `{"system":{"set_relay_state":{"state":0}}}`
+		const turnOffCommand = `{"system":{"set_relay_state":{"state":0}}}`
 		It("sends turn off command", func() {
 			s := &commandSender{}
 			hs100 := hs100.NewHs100(anIpAddress, s)
 
-			hs100.TurnOff()
+			err := hs100.TurnOff()
 
+			Expect(err).NotTo(HaveOccurred())
 			assertOneCommandSend(s, anIpAddress, turnOffCommand)
 		})
-	}
+	})
+
 	const readStateCommand = `{"system":{"get_sysinfo":{}}}`
 	const readCurrentPowerConsumptionCommand = `{"emeter":{"get_realtime":{},"get_vgain_igain":{}}}`
 

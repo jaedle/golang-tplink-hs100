@@ -60,8 +60,9 @@ type turnOnResponse struct {
 	} `json:"system"`
 }
 
-func (hs100 *Hs100) TurnOff() {
+func (hs100 *Hs100) TurnOff() error {
 	_, _ = hs100.commandSender.SendCommand(hs100.Address, turnOffCommand)
+	return nil
 }
 
 func (hs100 *Hs100) IsOn() (bool, error) {
