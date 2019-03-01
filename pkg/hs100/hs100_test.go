@@ -133,6 +133,7 @@ var _ = Describe("Hs100", func() {
 			s := &commandSender{
 				response: currentPowerConsumptionResponse(
 					"1.2345678",
+					"230.123456",
 				),
 			}
 			hs100 := hs100.NewHs100(anIpAddress, s)
@@ -142,6 +143,7 @@ var _ = Describe("Hs100", func() {
 			Expect(err).NotTo(HaveOccurred())
 			assertOneCommandSend(s, anIpAddress, readCurrentPowerConsumptionCommand)
 			Expect(powerConsumption.Current).To(BeNumerically("~", 1.2345678, 0.001))
+			Expect(powerConsumption.Voltage).To(BeNumerically("~", 230.123456, 0.001))
 		})
 
 		It("fails if communication with device is not succesful", func() {
@@ -170,13 +172,12 @@ var _ = Describe("Hs100", func() {
 	})
 })
 
-func currentPowerConsumptionResponse(current string) string {
-	return `
-{  
+func currentPowerConsumptionResponse(current string, voltage string) string {
+	return `{ 
    "emeter":{  
       "get_realtime":{  
          "current":` + current + `,
-         "voltage":230.123456,
+         "voltage":` + voltage + `,
          "power":284.103008,
          "total":52.859000,
          "err_code":0

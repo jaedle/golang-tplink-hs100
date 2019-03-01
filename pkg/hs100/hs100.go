@@ -48,6 +48,22 @@ func (hs100 *Hs100) IsOn() (bool, error) {
 	return on, nil
 }
 
+func isOn(s string) (error, bool) {
+	var r response
+	err := json.Unmarshal([]byte(s), &r)
+	on := r.System.SystemInfo.RelayState == 1
+	return err, on
+}
+
+type response struct {
+	System struct {
+		SystemInfo struct {
+			RelayState int    `json:"relay_state"`
+			Alias      string `json:"alias"`
+		} `json:"get_sysinfo"`
+	} `json:"system"`
+}
+
 func (hs100 *Hs100) GetName() (string, error) {
 	resp, err := hs100.commandSender.SendCommand(hs100.Address, isOnCommand)
 
@@ -63,6 +79,13 @@ func (hs100 *Hs100) GetName() (string, error) {
 	return name, nil
 }
 
+func name(resp string) (error, string) {
+	var r response
+	err := json.Unmarshal([]byte(resp), &r)
+	name := r.System.SystemInfo.Alias
+	return err, name
+}
+
 func (hs100 *Hs100) GetCurrentPowerConsumption() (PowerConsumption, error) {
 	resp, err := hs100.commandSender.SendCommand(hs100.Address, currentPowerConsumptionCommand)
 	if err != nil {
@@ -71,18 +94,9 @@ func (hs100 *Hs100) GetCurrentPowerConsumption() (PowerConsumption, error) {
 	return powerConsumption(resp)
 }
 
-func name(resp string) (error, string) {
-	var r response
-	err := json.Unmarshal([]byte(resp), &r)
-	name := r.System.SystemInfo.Alias
-	return err, name
-}
-
-func isOn(s string) (error, bool) {
-	var r response
-	err := json.Unmarshal([]byte(s), &r)
-	on := r.System.SystemInfo.RelayState == 1
-	return err, on
+type PowerConsumption struct {
+	Current float32
+	Voltage float32
 }
 
 func powerConsumption(resp string) (PowerConsumption, error) {
@@ -94,28 +108,17 @@ func powerConsumption(resp string) (PowerConsumption, error) {
 	} else {
 		consumption = PowerConsumption{
 			Current: r.Emeter.RealTime.Current,
+			Voltage: r.Emeter.RealTime.Voltage,
 		}
 		return consumption, nil
 	}
-}
-
-type response struct {
-	System struct {
-		SystemInfo struct {
-			RelayState int    `json:"relay_state"`
-			Alias      string `json:"alias"`
-		} `json:"get_sysinfo"`
-	} `json:"system"`
 }
 
 type powerConsumptionResponse struct {
 	Emeter struct {
 		RealTime struct {
 			Current float32 `json:"current"`
+			Voltage float32 `json:"voltage"`
 		} `json:"get_realtime"`
 	} `json:"emeter"`
-}
-
-type PowerConsumption struct {
-	Current float32
 }
