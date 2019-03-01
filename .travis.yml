@@ -22,5 +22,6 @@ script:
 - task test
 - task integration-test
 - task lint
+- task lint-markdown
 - task coveralls-analysis
 - task sonar-analysis

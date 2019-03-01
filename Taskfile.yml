@@ -53,6 +53,11 @@ tasks:
     silent: true
     cmds:
     - golangci-lint run
+  lint-markdown:
+    dir: ./
+    silent: true
+    cmds:
+    - docker container run --rm -it -v "$PWD/README.md:/lint/input/README.md" zemanlx/remark-lint --quiet --frail README.md --no-stdout
   coveralls-analysis:
     silent: true
     cmds:

@@ -14,9 +14,10 @@ Yet another tp-link HS100 library for golang
 
 ## Usage
 
-install library ``go get github.com/jaedle/golang-tplink-hs100``
+install library `go get github.com/jaedle/golang-tplink-hs100`
 
-use the following code as main and replace `YOUR_HS100_DEVICE` with the address of your HS100-device.
+use the following code as main and replace `YOUR_HS100_DEVICE` with the 
+address of your HS100-device.
 
 ```golang
 package main
@@ -42,18 +43,25 @@ func main() {
 
 ## Acknowledgements
 
-- [tplink-smarthome-api](https://github.com/plasticrake/tplink-smarthome-api): Thanks for the inspiration!
-- [tplink-smarthome-crypto](https://github.com/plasticrake/tplink-smarthome-crypto) Thanks for the excellent documentation/test-cases for encrypting/decrypting the communication
-- [tplink-smarthome-simulator](https://github.com/plasticrake/tplink-smarthome-simulator) Thanks for providing a device simulator for integration tests!
-- [hs1xxplug](https://github.com/sausheong/hs1xxplug): Thanks for the blueprint in golang!
+-   [tplink-smarthome-api](https://github.com/plasticrake/tplink-smarthome-api): 
+    Thanks for the inspiration!
 
+-   [tplink-smarthome-crypto](https://github.com/plasticrake/tplink-smarthome-crypto) 
+    Thanks for the excellent documentation/test-cases for encrypting/decrypting 
+    the communication
+
+-   [tplink-smarthome-simulator](https://github.com/plasticrake/tplink-smarthome-simulator) 
+    Thanks for providing a device simulator for integration tests!
+
+-   [hs1xxplug](https://github.com/sausheong/hs1xxplug): 
+    Thanks for the blueprint in golang!
 
 ## Development
 
 ### Prerequisites
 
-1. go-task 
-2. docker 
+1.  go-task 
+1.  docker
 
 ## Project structure
 
