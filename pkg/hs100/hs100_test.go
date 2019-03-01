@@ -11,14 +11,17 @@ var _ = Describe("Hs100", func() {
 	const anIpAddress = "192.168.2.1"
 	const aDeviceName = "some-device-name"
 
-	It("sends turn on command", func() {
-		s := &commandSender{}
-		hs100 := hs100.NewHs100(anIpAddress, s)
+	Describe("turnOn", func() {
+		It("sends turn on command", func() {
+			s := &commandSender{}
+			hs100 := hs100.NewHs100(anIpAddress, s)
 
-		hs100.TurnOn()
+			err := hs100.TurnOn()
 
-		const turnOnCommand = `{"system":{"set_relay_state":{"state":1}}}`
-		assertOneCommandSend(s, anIpAddress, turnOnCommand)
+			const turnOnCommand = `{"system":{"set_relay_state":{"state":1}}}`
+			Expect(err).NotTo(HaveOccurred())
+			assertOneCommandSend(s, anIpAddress, turnOnCommand)
+		})
 	})
 
 	It("sends turn off command", func() {

@@ -26,8 +26,9 @@ type CommandSender interface {
 	SendCommand(address string, command string) (string, error)
 }
 
-func (hs100 *Hs100) TurnOn() {
+func (hs100 *Hs100) TurnOn() error {
 	_, _ = hs100.commandSender.SendCommand(hs100.Address, turnOnCommand)
+	return nil
 }
 
 func (hs100 *Hs100) TurnOff() {
