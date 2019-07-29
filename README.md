@@ -14,7 +14,15 @@ Yet another tp-link HS100 library for golang
 
 ## Usage
 
+### With a project using go modules
+
 install library `go get github.com/jaedle/golang-tplink-hs100`
+
+### Without using go modules
+
+install library `go get github.com/jaedle/golang-tplink-hs100/...`
+
+### Usage example
 
 use the following code as main and replace `YOUR_HS100_DEVICE` with the 
 address of your HS100-device.
