@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"io"
 	"net"
+	"time"
 
 	"github.com/jaedle/golang-tplink-hs100/internal/crypto"
 )
@@ -12,8 +13,8 @@ import (
 const devicePort = ":9999"
 const headerLength = 4
 
-func SendCommand(address string, command string) (string, error) {
-	conn, err := net.Dial("tcp", address+devicePort)
+func SendCommand(address string, command string, timeout time.Duration) (string, error) {
+	conn, err := net.DialTimeout("tcp", address+devicePort, timeout)
 	if err != nil {
 		return "", err
 	}

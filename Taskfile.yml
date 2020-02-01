@@ -1,34 +1,51 @@
 version: '2'
 
 tasks:
+  verify:
+    silent: true
+    cmds:
+    - which docker 12> /dev/null
+    - which ginkgo 12> /dev/null
+    - which go 12> /dev/null
+    - which golangci-lint 12> /dev/null
+    - which gover 12> /dev/null
+    - which goveralls 12> /dev/null
+    - go version | grep -q 'go1.13' || (echo 'wrong go version, expecting 1.13' && exit 1)
+    - docker version >> /dev/null || (echo 'docker daemon is not running' && exit 1)
+
   install-tools:
     silent: true
     cmds:
-    - "$(cd $HOME && curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.14.0)"
+    - "$(cd $HOME && curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.23.1)"
     - "$(cd $HOME && GO111MODULE=off go get github.com/onsi/ginkgo/ginkgo)"
     - "$(cd $HOME && GO111MODULE=off go get github.com/modocache/gover)"
     - "$(cd $HOME && GO111MODULE=off go get github.com/mattn/goveralls)"
+
   install:
     silent: true
     cmds:
     - go mod download
+
   world:
     silent: true
     cmds:
+      - task: verify
       - task: test
       - task: integration-test
       - task: lint
-      - task: lint-markdown
+
   test:
     deps: [stop-device-simulation-container]
     silent: true
     cmds:
     - ginkgo -r -cover -skipPackage=integration
+
   test-watch:
     deps: [stop-device-simulation-container]
     silent: true
     cmds:
     - ginkgo watch -r -skipPackage=integration
+
   integration-test:
     silent: true
     cmds:
@@ -36,29 +53,35 @@ tasks:
       - task: start-device-simulation-container
       - ginkgo test/integration
       - task: stop-device-simulation-container
+
   build-device-simulation-image:
     dir: test/device-simulation
     silent: true
     cmds:
       - docker image build -t golang-tplink-hs100:device-simulation . >> /dev/null
+
   start-device-simulation-container:
     deps: [stop-device-simulation-container]
     silent: true
     cmds:
       - docker container run -e DEBUG=* -p 9999:9999 --name tplink-device-simulation --rm -d golang-tplink-hs100:device-simulation >> /dev/null
+
   stop-device-simulation-container:
     silent: true
     cmds:
       - docker container rm -f tplink-device-simulation &>> /dev/null || true
+
   lint:
     silent: true
     cmds:
     - golangci-lint run
+
   coveralls-analysis:
     silent: true
     cmds:
     - gover
     - goveralls -coverprofile=gover.coverprofile -service=travis-ci
+
   sonar-analysis:
     silent: true
     cmds:

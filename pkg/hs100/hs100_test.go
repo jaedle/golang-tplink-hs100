@@ -5,6 +5,7 @@ import (
 	"github.com/jaedle/golang-tplink-hs100/pkg/hs100"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"time"
 )
 
 var _ = Describe("Hs100", func() {
@@ -237,7 +238,80 @@ var _ = Describe("Hs100", func() {
 			Expect(powerConsumption).To(BeZero())
 		})
 	})
+
+	Describe("discover", func() {
+		It("fails on illegal subnet", func() {
+			var err error
+			_, err = hs100.Discover("", &commandSender{})
+			Expect(err).To(HaveOccurred())
+
+			_, err = hs100.Discover("192.168.2.0", &commandSender{})
+			Expect(err).To(HaveOccurred())
+
+			_, err = hs100.Discover("192.168.2.0/", &commandSender{})
+			Expect(err).To(HaveOccurred())
+		})
+
+		It("looks up devices", func() {
+			devices, err := hs100.Discover("192.168.2.0/24", &commandSender{
+				response: reponseWithName(aDeviceName),
+			})
+
+			Expect(err).NotTo(HaveOccurred())
+			Expect(len(devices)).To(Equal(254))
+			Expect(containsAddress(devices, "192.168.2.0")).To(Equal(false))
+			Expect(containsAddress(devices, "192.168.2.1")).To(Equal(true))
+			Expect(containsAddress(devices, "192.168.2.2")).To(Equal(true))
+			Expect(containsAddress(devices, "192.168.2.127")).To(Equal(true))
+			Expect(containsAddress(devices, "192.168.2.254")).To(Equal(true))
+			Expect(containsAddress(devices, "192.168.2.255")).To(Equal(false))
+		})
+
+		It("returns only responding devices", func() {
+			devices, err := hs100.Discover("192.168.2.0/24", &commandSender{
+				allowedAddresses: &[]string{
+					"192.168.2.5",
+					"192.168.2.30",
+					"192.168.2.105",
+				},
+				response: reponseWithName(aDeviceName),
+			})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(len(devices)).To(Equal(3))
+			assertContainsDevice(devices, "192.168.2.5")
+			assertContainsDevice(devices, "192.168.2.30")
+			assertContainsDevice(devices, "192.168.2.105")
+		})
+
+		It("discovers in parallel", func() {
+			start := time.Now()
+			duration := 10*time.Millisecond
+			_, err := hs100.Discover("192.168.2.0/24", &commandSender{
+				response:      reponseWithName(aDeviceName),
+				responseDelay: &duration,
+			})
+			finished := time.Now()
+			maximum := start.Add(100*time.Millisecond)
+
+			Expect(err).NotTo(HaveOccurred())
+			Expect(finished.Before(maximum)).To(Equal(true))
+		})
+	})
 })
+
+func assertContainsDevice(devices []*hs100.Hs100, address string) bool {
+	return Expect(containsAddress(devices, address)).To(Equal(true))
+}
+
+func containsAddress(devices []*hs100.Hs100, address string) bool {
+	for _, d := range devices {
+		if d.Address == address {
+			return true
+		}
+	}
+
+	return false
+}
 
 func currentPowerConsumptionResponse(current string, voltage string, power string) string {
 	return `{ 
@@ -363,14 +437,40 @@ type commandSender struct {
 	command  string
 	response string
 	error    bool
+	allowedAddresses *[]string
+	responseDelay *time.Duration
 }
 
 func (c *commandSender) SendCommand(addr string, cmd string) (string, error) {
+	if c.responseDelay != nil {
+		time.Sleep(*c.responseDelay)
+	}
+
+	c.calls++
 	if c.error {
 		return "", errors.New("some error")
 	}
-	c.calls++
+
+	if c.restrictAddresses() {
+		if !c.isAllowed(addr) {
+			return "", errors.New("some error")
+		}
+	}
+
 	c.address = addr
 	c.command = cmd
 	return c.response, nil
+}
+
+func (c *commandSender) restrictAddresses() bool {
+	return c.allowedAddresses != nil
+}
+
+func (c *commandSender) isAllowed(addr string) bool {
+	for _, a := range *c.allowedAddresses {
+		if addr == a {
+			return true
+		}
+	}
+	return false
 }
