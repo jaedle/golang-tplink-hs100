@@ -169,3 +169,7 @@ func (r *powerConsumptionResponse) toPowerConsumption() PowerConsumption {
 		Power:   r.Emeter.RealTime.Power,
 	}
 }
+
+func Discover(subnet string) []*Hs100 {
+	return nil
+}

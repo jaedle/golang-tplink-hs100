@@ -49,6 +49,31 @@ func main() {
 }
 ```
 
+## Device discovery
+
+It is possible to discover devices automatically.
+Because this library uses tcp communication this requires to specify a subnet by CIDR notation.
+For this example all ips from 192.168.2.1 to 192.168.2.255 will be tried out as an hs100-device.
+
+```golang
+package main
+
+import (
+	"github.com/jaedle/golang-tplink-hs100/pkg/hs100"
+	"log"
+)
+
+func main() {
+	devices := hs100.Discover("192.168.2.0/24")
+
+	log.Printf("Found devices: %d", len(devices))
+	for _, d := range devices {
+		name, _ := d.GetName()
+		log.Printf("Device name: %s", name)
+	}
+}
+```
+
 ## Acknowledgements
 
 -   [tplink-smarthome-api](https://github.com/plasticrake/tplink-smarthome-api): 
