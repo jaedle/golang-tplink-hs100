@@ -21,6 +21,7 @@ func Default() *DefaultSendCommandImplementation {
 	}
 }
 
-func (a *DefaultSendCommandImplementation) WithTimeout(timeout time.Duration) {
+func (a *DefaultSendCommandImplementation) WithTimeout(timeout time.Duration) *DefaultSendCommandImplementation {
 	a.timeout = timeout
+	return a
 }

@@ -53,18 +53,26 @@ func main() {
 
 It is possible to discover devices automatically.
 Because this library uses tcp communication this requires to specify a subnet by CIDR notation.
-For this example all ips from 192.168.2.1 to 192.168.2.255 will be tried out as an hs100-device.
+For this example `192.168.2.0/24` all ips from `192.168.2.1` to `192.168.2.255` will be tried to reached.
+By using `withTimeout(time.Duration)` a custom timeout can be specified instead of the default timeout.
+
+*The discovery process will take at least the time of the default timeout.*
 
 ```golang
 package main
 
 import (
+	"github.com/jaedle/golang-tplink-hs100/pkg/configuration"
 	"github.com/jaedle/golang-tplink-hs100/pkg/hs100"
 	"log"
+	"time"
 )
 
 func main() {
-	devices, err := hs100.Discover("192.168.2.0/24")
+	devices, err := hs100.Discover("192.168.2.0/24",
+		configuration.Default().WithTimeout(time.Second),
+	)
+
 	if err != nil {
 		panic(err)
 	}
