@@ -33,6 +33,7 @@ tasks:
       - task: test
       - task: integration-test
       - task: lint
+      - task: cleanup
 
   test:
     deps: [stop-device-simulation-container]
@@ -75,6 +76,12 @@ tasks:
     silent: true
     cmds:
     - golangci-lint run
+
+  cleanup:
+    silent: true
+    cmds:
+    - go mod verify
+    - go mod tidy  
 
   coveralls-analysis:
     silent: true
