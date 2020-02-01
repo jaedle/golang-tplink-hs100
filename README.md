@@ -64,7 +64,10 @@ import (
 )
 
 func main() {
-	devices := hs100.Discover("192.168.2.0/24")
+	devices, err := hs100.Discover("192.168.2.0/24")
+	if err != nil {
+		panic(err)
+	}
 
 	log.Printf("Found devices: %d", len(devices))
 	for _, d := range devices {

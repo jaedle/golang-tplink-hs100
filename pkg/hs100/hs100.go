@@ -170,6 +170,6 @@ func (r *powerConsumptionResponse) toPowerConsumption() PowerConsumption {
 	}
 }
 
-func Discover(subnet string) []*Hs100 {
-	return nil
+func Discover(subnet string) ([]*Hs100, error) {
+	return nil, nil
 }
