@@ -4,6 +4,10 @@ tasks:
   verify:
     cmds:
     - go version | grep -q 'go1.13' || (echo 'wrong go version, expecting 1.13' && exit 1)
+    - which -s golangci-lint
+    - which -s ginkgo
+    - which -s gover
+    - which -s goveralls
     silent: true
 
   install-tools:
