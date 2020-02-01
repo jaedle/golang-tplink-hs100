@@ -1,12 +1,13 @@
 package main
 
 import (
+	"github.com/jaedle/golang-tplink-hs100/pkg/configuration"
 	"github.com/jaedle/golang-tplink-hs100/pkg/hs100"
 	"log"
 )
 
 func main() {
-	devices, err := hs100.Discover("192.168.2.0/24", nil)
+	devices, err := hs100.Discover("192.168.2.0/24", configuration.Default())
 	if err != nil {
 		panic(err)
 	}
