@@ -15,13 +15,15 @@ var _ = Describe("Connector", func() {
 	const aCommand = `{"expected": "command"}}`
 	const aResponse = `{"response": "expected"}}`
 
+	const timeout = 5 * time.Second
+
 	It("sends command", func() {
 		l := startServer()
 		defer l.Close()
 		request := make(chan []byte)
 		go handleRequest(l, request, crypto.EncryptWithHeader(aResponse))
 
-		_, err := connector.SendCommand("127.0.0.1", aCommand)
+		_, err := connector.SendCommand("127.0.0.1", aCommand, timeout)
 		requestPayload := awaitRequest(request)
 
 		Expect(err).NotTo(HaveOccurred())
@@ -34,7 +36,7 @@ var _ = Describe("Connector", func() {
 		request := make(chan []byte)
 		go handleRequest(l, request, crypto.EncryptWithHeader(aResponse))
 
-		resp, err := connector.SendCommand("127.0.0.1", aCommand)
+		resp, err := connector.SendCommand("127.0.0.1", aCommand, timeout)
 		awaitRequest(request)
 
 		Expect(err).NotTo(HaveOccurred())
@@ -42,7 +44,7 @@ var _ = Describe("Connector", func() {
 	})
 
 	It("fails if cannot connect", func() {
-		response, err := connector.SendCommand("127.0.0.1", aCommand)
+		response, err := connector.SendCommand("127.0.0.1", aCommand, timeout)
 		Expect(err).To(HaveOccurred())
 		Expect(response).To(BeEmpty())
 	})
