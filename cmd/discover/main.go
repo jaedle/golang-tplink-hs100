@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	devices, err := hs100.Discover("192.168.2.0/24")
+	devices, err := hs100.Discover("192.168.2.0/24", nil)
 	if err != nil {
 		panic(err)
 	}

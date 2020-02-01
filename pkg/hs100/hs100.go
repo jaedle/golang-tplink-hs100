@@ -3,6 +3,8 @@ package hs100
 import (
 	"encoding/json"
 	"github.com/pkg/errors"
+	"net"
+	"sync"
 )
 
 const turnOnCommand = `{"system":{"set_relay_state":{"state":1}}}`
@@ -170,6 +172,65 @@ func (r *powerConsumptionResponse) toPowerConsumption() PowerConsumption {
 	}
 }
 
-func Discover(subnet string) ([]*Hs100, error) {
-	return nil, nil
+func Discover(subnet string, s CommandSender) ([]*Hs100, error) {
+	ips, err := getIpAddresses(subnet)
+	if err != nil {
+		return nil, err
+	}
+
+	result := &discoverResult{
+		devices: make([]*Hs100, 0),
+		Mutex:   sync.Mutex{},
+	}
+	var wg sync.WaitGroup
+
+	wg.Add(len(ips))
+	for _, current := range ips {
+		go func(r *discoverResult, w *sync.WaitGroup, ip string) {
+			defer w.Done()
+
+			hs100 := NewHs100(ip, s)
+			_, err := hs100.GetName()
+			if err != nil {
+				return
+			}
+
+			r.Lock()
+			defer r.Unlock()
+			r.devices = append(result.devices, hs100)
+		}(result, &wg, current)
+	}
+
+	wg.Wait()
+
+	return result.devices, nil
+}
+
+type discoverResult struct {
+	devices []*Hs100
+	sync.Mutex
+}
+
+func getIpAddresses(subnet string) ([]string, error) {
+	ip, ipnet, err := net.ParseCIDR(subnet)
+	if err != nil {
+		return nil, errors.Wrap(err, "invalid subnet specfied")
+	}
+
+	var ips []string
+	for ip := ip.Mask(ipnet.Mask); ipnet.Contains(ip); inc(ip) {
+		ips = append(ips, ip.String())
+	}
+
+	return ips[1 : len(ips)-1], nil
+}
+
+//  http://play.golang.org/p/m8TNTtygK0
+func inc(ip net.IP) {
+	for j := len(ip) - 1; j > 0; j-- {
+		ip[j]++
+		if ip[j] > 0 {
+			break
+		}
+	}
 }
