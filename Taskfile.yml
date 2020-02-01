@@ -17,7 +17,7 @@ tasks:
     - "$(cd $HOME && GO111MODULE=off go get github.com/onsi/ginkgo/ginkgo)"
     - "$(cd $HOME && GO111MODULE=off go get github.com/modocache/gover)"
     - "$(cd $HOME && GO111MODULE=off go get github.com/mattn/goveralls)"
-    -
+
   install:
     silent: true
     cmds:
