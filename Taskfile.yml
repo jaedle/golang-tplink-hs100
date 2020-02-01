@@ -33,7 +33,6 @@ tasks:
       - task: test
       - task: integration-test
       - task: lint
-      - task: lint-markdown
 
   test:
     deps: [stop-device-simulation-container]
