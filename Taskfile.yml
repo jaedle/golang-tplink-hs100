@@ -1,6 +1,11 @@
 version: '2'
 
 tasks:
+  verify:
+    cmds:
+    - go version | grep -q 'go1.13' || (echo 'wrong go version, expecting 1.13' && exit 1)
+    silent: true
+
   install-tools:
     silent: true
     cmds:
@@ -15,6 +20,7 @@ tasks:
   world:
     silent: true
     cmds:
+      - task: verify
       - task: test
       - task: integration-test
       - task: lint
