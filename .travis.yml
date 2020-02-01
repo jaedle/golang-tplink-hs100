@@ -18,6 +18,7 @@ before_install:
 - task install-tools
 install:
 - task install
+- task verify
 script:
 - task test
 - task integration-test

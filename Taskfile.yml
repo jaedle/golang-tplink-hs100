@@ -4,11 +4,14 @@ tasks:
   verify:
     silent: true
     cmds:
-    - go version | grep -q 'go1.13' || (echo 'wrong go version, expecting 1.13' && exit 1)
-    - which -s golangci-lint
+    - which -s docker
     - which -s ginkgo
+    - which -s go
+    - which -s golangci-lint
     - which -s gover
     - which -s goveralls
+    - go version | grep -q 'go1.13' || (echo 'wrong go version, expecting 1.13' && exit 1)
+    - docker version >> /dev/null || (echo 'docker daemon is not running' && exit 1)
 
   install-tools:
     silent: true
