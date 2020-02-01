@@ -14,7 +14,7 @@ const devicePort = ":9999"
 const headerLength = 4
 
 func SendCommand(address string, command string, timeout time.Duration) (string, error) {
-	conn, err := net.DialTimeout("tcp", address+devicePort, 5*time.Second)
+	conn, err := net.DialTimeout("tcp", address+devicePort, timeout)
 	if err != nil {
 		return "", err
 	}
