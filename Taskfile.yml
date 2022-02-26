@@ -36,7 +36,7 @@ tasks:
     deps: [stop-device-simulation-container]
     silent: true
     cmds:
-    - go test $(go list ./... | grep -v '/test/integration') -count=1
+    - go test -covermode=count -coverprofile=coverage.out $(go list ./... | grep -v '/test/integration') -count=1
 
   integration-test:
     silent: true
