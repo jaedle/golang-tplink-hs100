@@ -14,3 +14,5 @@ jobs:
         run: |
           task install-tools && \
           task install
+      - name: verify preconditions
+        run: task verify
