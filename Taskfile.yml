@@ -10,7 +10,6 @@ tasks:
     - which golangci-lint 12> /dev/null
     - which gover 12> /dev/null
     - which goveralls 12> /dev/null
-    - go version | grep -q 'go1.13' || (echo 'wrong go version, expecting 1.13' && exit 1)
     - docker version >> /dev/null || (echo 'docker daemon is not running' && exit 1)
 
   install-tools:
