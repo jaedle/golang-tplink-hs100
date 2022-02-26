@@ -7,7 +7,6 @@ tasks:
     - which docker 12> /dev/null
     - which go 12> /dev/null
     - which golangci-lint 12> /dev/null
-    - which gover 12> /dev/null
     - which goveralls 12> /dev/null
     - docker version >> /dev/null || (echo 'docker daemon is not running' && exit 1)
 
