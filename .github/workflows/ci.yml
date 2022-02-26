@@ -16,6 +16,6 @@ jobs:
           task install
       - run: export PATH="$PATH:$HOME/bin:$HOME/gopath/bin"
       - name: verify preconditions
-        run: task verify
-      - run: task test integration-test
-      - run: task lint
+        run: PATH="$PATH:$HOME/bin:$HOME/gopath/bin" task verify
+      - run: PATH="$PATH:$HOME/bin:$HOME/gopath/bin" task test integration-test
+      - run: PATH="$PATH:$HOME/bin:$HOME/gopath/bin" task lint
