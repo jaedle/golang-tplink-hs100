@@ -14,7 +14,7 @@ tasks:
   install-tools:
     silent: true
     cmds:
-    - "$(cd $HOME && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh  | sh -s v1.23.1)"
+    - "$(cd $HOME && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh  | sh -s v1.44.2)"
     - "$(cd $HOME && GO111MODULE=off go get github.com/modocache/gover)"
     - "$(cd $HOME && GO111MODULE=off go get github.com/mattn/goveralls)"
 
