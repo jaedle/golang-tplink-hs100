@@ -5,7 +5,6 @@ tasks:
     silent: true
     cmds:
     - which docker 12> /dev/null
-    - which ginkgo 12> /dev/null
     - which go 12> /dev/null
     - which golangci-lint 12> /dev/null
     - which gover 12> /dev/null
@@ -16,7 +15,6 @@ tasks:
     silent: true
     cmds:
     - "$(cd $HOME && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh  | sh -s v1.23.1)"
-    - "$(cd $HOME && GO111MODULE=off go get github.com/onsi/ginkgo/ginkgo)"
     - "$(cd $HOME && GO111MODULE=off go get github.com/modocache/gover)"
     - "$(cd $HOME && GO111MODULE=off go get github.com/mattn/goveralls)"
 
@@ -38,20 +36,14 @@ tasks:
     deps: [stop-device-simulation-container]
     silent: true
     cmds:
-    - ginkgo -r -cover -skipPackage=integration
-
-  test-watch:
-    deps: [stop-device-simulation-container]
-    silent: true
-    cmds:
-    - ginkgo watch -r -skipPackage=integration
+    - go test $(go list ./... | grep -v '/test/integration') -count=1
 
   integration-test:
     silent: true
     cmds:
       - task: build-device-simulation-image
       - task: start-device-simulation-container
-      - ginkgo test/integration
+      - go test ./test/integration -count=1
       - task: stop-device-simulation-container
 
   build-device-simulation-image:
