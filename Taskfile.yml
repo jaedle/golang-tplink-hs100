@@ -15,8 +15,7 @@ tasks:
     silent: true
     cmds:
     - "$(cd $HOME && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh  | sh -s v1.44.2)"
-    - "$(cd $HOME && GO111MODULE=off go get github.com/modocache/gover)"
-    - "$(cd $HOME && GO111MODULE=off go get github.com/mattn/goveralls)"
+    - "$(go install github.com/mattn/goveralls@latest)"
 
   install:
     silent: true
@@ -77,8 +76,7 @@ tasks:
   coveralls-analysis:
     silent: true
     cmds:
-    - gover
-    - goveralls -coverprofile=gover.coverprofile -service=travis-ci
+    - goveralls -coverprofile=coverage.out -service=github
 
   sonar-analysis:
     silent: true

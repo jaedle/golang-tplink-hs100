@@ -19,3 +19,7 @@ jobs:
         run: PATH="$PATH:$HOME/bin:$HOME/gopath/bin" task verify
       - run: PATH="$PATH:$HOME/bin:$HOME/gopath/bin" task test integration-test
       - run: PATH="$PATH:$HOME/bin:$HOME/gopath/bin" task lint
+      - name: Send coverage
+        env:
+          COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: task coveralls-analysis
