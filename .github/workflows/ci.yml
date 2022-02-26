@@ -1,13 +1,13 @@
 name: test
 on: [ push ]
 
-env:
-  PATH: "$PATH:$HOME/bin:$HOME/gopath/bin"
-
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - run: |
+          echo "$HOME/bin" >> "$GITHUB_PATH"
+          echo "$HOME/gopath/bin" >> "$GITHUB_PATH"
       - name: Install Task
         uses: arduino/setup-task@v1
       - uses: actions/setup-go@v2
