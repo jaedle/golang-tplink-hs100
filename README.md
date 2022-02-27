@@ -4,10 +4,9 @@ Yet another tp-link HS100 library for golang
 
 ## Badges
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/bce147bd9ade43cbae3b62157cc75aac)](https://app.codacy.com/app/jaedle/golang-tplink-hs100?utm_source=github.com&utm_medium=referral&utm_content=jaedle/golang-tplink-hs100&utm_campaign=Badge_Grade_Dashboard)
-[![Build Status](https://travis-ci.com/jaedle/golang-tplink-hs100.svg?branch=master)](https://travis-ci.com/jaedle/golang-tplink-hs100)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/a1651904e33541b18a0b582106bf0afb)](https://www.codacy.com/gh/jaedle/golang-tplink-hs100/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jaedle/golang-tplink-hs100&amp;utm_campaign=Badge_Grade)
+[![Tests](https://github.com/jaedle/golang-tplink-hs100/actions/workflows/ci.yml/badge.svg)](https://github.com/jaedle/golang-tplink-hs100/blob/master/.github/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/jaedle/golang-tplink-hs100/badge.svg?branch=master)](https://coveralls.io/github/jaedle/golang-tplink-hs100?branch=master)
-[![GolangCI](https://golangci.com/badges/github.com/jaedle/golang-tplink-hs100.svg)](https://golangci.com)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=golang-tplink-hs100&metric=code_smells)](https://sonarcloud.io/dashboard?id=golang-tplink-hs100)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=golang-tplink-hs100&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=golang-tplink-hs100)
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=golang-tplink-hs100&metric=sqale_index)](https://sonarcloud.io/dashboard?id=golang-tplink-hs100)
