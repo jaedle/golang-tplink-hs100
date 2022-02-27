@@ -11,15 +11,16 @@ Yet another tp-link HS100 library for golang
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=golang-tplink-hs100&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=golang-tplink-hs100)
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=golang-tplink-hs100&metric=sqale_index)](https://sonarcloud.io/dashboard?id=golang-tplink-hs100)
 
+## Supported Go versions:
+
+- 1.16
+- 1.17
+
 ## Usage
 
-### With a project using go modules
+Please make sure to have go-modules enabled.
 
-install library `go get github.com/jaedle/golang-tplink-hs100`
-
-### Without using go modules
-
-install library `go get github.com/jaedle/golang-tplink-hs100/...`
+Run within your go project folder: `go get -u github.com/jaedle/golang-tplink-hs100`
 
 ### Usage example
 

@@ -1,4 +1,4 @@
-name: execute validation runs
+name: run matrix test with different go versions
 on:
   - push
   - pull_request
@@ -6,6 +6,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: [1.16, 1.17]
     steps:
       - run: |
           echo "$HOME/bin" >> "$GITHUB_PATH"
@@ -14,7 +17,8 @@ jobs:
         uses: arduino/setup-task@v1
       - uses: actions/setup-go@v2
         with:
-          go-version: '1.17'
+          go-version: ${{ matrix.go }}
+          check-latest: true
       - uses: actions/checkout@v2
       - name: install
         run: |
@@ -23,12 +27,3 @@ jobs:
       - name: verify preconditions
         run: task verify
       - run: task test integration-test
-      - run: task lint
-      - run: task coveralls-analysis
-        env:
-          COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
