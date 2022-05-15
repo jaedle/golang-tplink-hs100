@@ -40,13 +40,13 @@ import (
 func main() {
 	h := hs100.NewHs100("YOUR_HS100_DEVICE", configuration.Default())
 
-	name, err := h.GetName()
+	info, err := h.GetInfo()
 	if err != nil {
 		println("Error on accessing device")
 		os.Exit(1)
 	}
 
-	println("Name of device: " + name)
+	println("Name of device: " + info.Name)
 }
 ```
 
@@ -80,8 +80,8 @@ func main() {
 
 	log.Printf("Found devices: %d", len(devices))
 	for _, d := range devices {
-		name, _ := d.GetName()
-		log.Printf("Device name: %s", name)
+		info, _ := d.GetInfo()
+		log.Printf("Found device (name, id): %s, %s", info.Name, info.DeviceId)
 	}
 }
 ```

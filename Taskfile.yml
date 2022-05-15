@@ -1,8 +1,9 @@
-version: '2'
+version: '3'
+
+silent: true
 
 tasks:
   verify:
-    silent: true
     cmds:
     - which docker 12> /dev/null
     - which go 12> /dev/null
@@ -11,18 +12,15 @@ tasks:
     - docker version >> /dev/null || (echo 'docker daemon is not running' && exit 1)
 
   install-tools:
-    silent: true
     cmds:
     - "$(cd $HOME && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh  | sh -s v1.46.1)"
     - "$(go install github.com/mattn/goveralls@latest)"
 
   install:
-    silent: true
     cmds:
     - go mod download
 
   world:
-    silent: true
     cmds:
       - task: verify
       - task: test
@@ -32,12 +30,10 @@ tasks:
 
   test:
     deps: [stop-device-simulation-container]
-    silent: true
     cmds:
     - go test -covermode=count -coverprofile=coverage.out $(go list ./... | grep -v '/test/integration') -count=1
 
   integration-test:
-    silent: true
     cmds:
       - task: build-device-simulation-image
       - task: start-device-simulation-container
@@ -46,39 +42,35 @@ tasks:
 
   build-device-simulation-image:
     dir: test/device-simulation
-    silent: true
     cmds:
       - docker image build -t golang-tplink-hs100:device-simulation . >> /dev/null
 
   start-device-simulation-container:
     deps: [stop-device-simulation-container]
-    silent: true
     cmds:
       - docker container run -e DEBUG=* -p 9999:9999 --name tplink-device-simulation --rm -d golang-tplink-hs100:device-simulation >> /dev/null
 
   stop-device-simulation-container:
-    silent: true
     cmds:
       - docker container rm -f tplink-device-simulation &>> /dev/null || true
 
   lint:
-    silent: true
     cmds:
     - golangci-lint run
 
   cleanup:
-    silent: true
     cmds:
     - go mod verify
     - go mod tidy  
 
   coveralls-analysis:
-    silent: true
     cmds:
     - goveralls -coverprofile=coverage.out -service=github
 
   sonar-analysis:
-    silent: true
     cmds:
     - gover
     - sonar-scanner
+
+  default:
+    cmds: [ task: world ]

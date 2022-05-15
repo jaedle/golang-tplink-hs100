@@ -18,7 +18,7 @@ func main() {
 
 	log.Printf("Found devices: %d", len(devices))
 	for _, d := range devices {
-		name, _ := d.GetName()
-		log.Printf("Device name: %s", name)
+		info, _ := d.GetInfo()
+		log.Printf("Found device (name, id): %s, %s", info.Name, info.DeviceId)
 	}
 }

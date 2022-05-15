@@ -10,6 +10,12 @@ const turnOffCommand = `{"system":{"set_relay_state":{"state":0}}}`
 const isOnCommand = `{"system":{"get_sysinfo":{}}}`
 const currentPowerConsumptionCommand = `{"emeter":{"get_realtime":{},"get_vgain_igain":{}}}`
 
+type Info struct {
+	Name     string
+	DeviceId string
+	on       bool
+}
+
 type Hs100 struct {
 	Address       string
 	commandSender CommandSender
@@ -77,24 +83,11 @@ func (hs100 *Hs100) TurnOff() error {
 }
 
 func (hs100 *Hs100) IsOn() (bool, error) {
-	resp, err := hs100.commandSender.SendCommand(hs100.Address, isOnCommand)
-	if err != nil {
+	if info, err := hs100.GetInfo(); err != nil {
 		return false, err
+	} else {
+		return info.on, nil
 	}
-
-	err, on := isOn(resp)
-	if err != nil {
-		return false, err
-	}
-
-	return on, nil
-}
-
-func isOn(s string) (error, bool) {
-	var r response
-	err := json.Unmarshal([]byte(s), &r)
-	on := r.System.SystemInfo.RelayState == 1
-	return err, on
 }
 
 type response struct {
@@ -102,30 +95,35 @@ type response struct {
 		SystemInfo struct {
 			RelayState int    `json:"relay_state"`
 			Alias      string `json:"alias"`
+			DeviceId   string `json:"deviceId"`
 		} `json:"get_sysinfo"`
 	} `json:"system"`
 }
 
+// Deprecated:
+// Use GetInfo() instead
+
 func (hs100 *Hs100) GetName() (string, error) {
-	resp, err := hs100.commandSender.SendCommand(hs100.Address, isOnCommand)
-
+	info, err := hs100.GetInfo()
 	if err != nil {
 		return "", err
+	} else {
+		return info.Name, nil
 	}
-
-	err, name := name(resp)
-	if err != nil {
-		return "", err
-	}
-
-	return name, nil
 }
 
-func name(resp string) (error, string) {
+func toInfo(resp string) (*Info, error) {
 	var r response
 	err := json.Unmarshal([]byte(resp), &r)
-	name := r.System.SystemInfo.Alias
-	return err, name
+	if err != nil {
+		return nil, err
+	}
+
+	return &Info{
+		Name:     r.System.SystemInfo.Alias,
+		DeviceId: r.System.SystemInfo.DeviceId,
+		on:       r.System.SystemInfo.RelayState == 1,
+	}, nil
 }
 
 func (hs100 *Hs100) GetCurrentPowerConsumption() (PowerConsumption, error) {
@@ -134,6 +132,14 @@ func (hs100 *Hs100) GetCurrentPowerConsumption() (PowerConsumption, error) {
 		return PowerConsumption{}, errors.Wrap(err, "Could not read from hs100 device")
 	}
 	return powerConsumption(resp)
+}
+
+func (hs100 *Hs100) GetInfo() (*Info, error) {
+	if resp, err := hs100.commandSender.SendCommand(hs100.Address, isOnCommand); err != nil {
+		return nil, err
+	} else {
+		return toInfo(resp)
+	}
 }
 
 type PowerConsumption struct {

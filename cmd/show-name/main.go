@@ -10,11 +10,11 @@ import (
 func main() {
 	h := hs100.NewHs100("192.168.2.100", configuration.Default())
 
-	name, err := h.GetName()
+	info, err := h.GetInfo()
 	if err != nil {
 		log.Print("Error on accessing device")
 		os.Exit(1)
 	}
 
-	log.Printf("Name of device: %s", name)
+	log.Printf("Name of device: %s", info.Name)
 }

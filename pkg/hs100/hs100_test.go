@@ -11,6 +11,7 @@ import (
 var _ = Describe("Hs100", func() {
 	const anIpAddress = "192.168.2.1"
 	const aDeviceName = "some-device-name"
+	const aDeviceId = "a-device-id"
 
 	Describe("turnOn", func() {
 		const turnOnCommand = `{"system":{"set_relay_state":{"state":1}}}`
@@ -158,7 +159,7 @@ var _ = Describe("Hs100", func() {
 	Describe("GetName", func() {
 		It("read the device name", func() {
 			s := &commandSender{
-				response: reponseWithName(aDeviceName),
+				response: infoResponse(aDeviceName, aDeviceId),
 			}
 			hs100 := hs100.NewHs100(anIpAddress, s)
 
@@ -191,6 +192,47 @@ var _ = Describe("Hs100", func() {
 
 			Expect(err).To(HaveOccurred())
 			Expect(name).To(Equal(""))
+		})
+	})
+
+	Describe("GetDeviceInfo", func() {
+		It("reads device info", func() {
+			s := &commandSender{
+				response: infoResponse(aDeviceName, aDeviceId),
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			info, err := hs100.GetInfo()
+
+			Expect(err).NotTo(HaveOccurred())
+			assertOneCommandSend(s, anIpAddress, readStateCommand)
+			Expect(info).NotTo(BeNil())
+			Expect(info.Name).To(Equal(aDeviceName))
+			Expect(info.DeviceId).To(Equal(aDeviceId))
+		})
+
+		It("fails if communication with device is not successful", func() {
+			s := &commandSender{
+				error: true,
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			info, err := hs100.GetInfo()
+
+			Expect(err).To(HaveOccurred())
+			Expect(info).To(BeNil())
+		})
+
+		It("fails if response is invalid", func() {
+			s := &commandSender{
+				response: "{]",
+			}
+			hs100 := hs100.NewHs100(anIpAddress, s)
+
+			info, err := hs100.GetInfo()
+
+			Expect(err).To(HaveOccurred())
+			Expect(info).To(BeNil())
 		})
 	})
 
@@ -254,7 +296,7 @@ var _ = Describe("Hs100", func() {
 
 		It("looks up devices", func() {
 			devices, err := hs100.Discover("192.168.2.0/24", &commandSender{
-				response: reponseWithName(aDeviceName),
+				response: infoResponse(aDeviceName, aDeviceId),
 			})
 
 			Expect(err).NotTo(HaveOccurred())
@@ -274,7 +316,7 @@ var _ = Describe("Hs100", func() {
 					"192.168.2.30",
 					"192.168.2.105",
 				},
-				response: reponseWithName(aDeviceName),
+				response: infoResponse(aDeviceName, aDeviceId),
 			})
 			Expect(err).NotTo(HaveOccurred())
 			Expect(len(devices)).To(Equal(3))
@@ -285,13 +327,13 @@ var _ = Describe("Hs100", func() {
 
 		It("discovers in parallel", func() {
 			start := time.Now()
-			duration := 10*time.Millisecond
+			duration := 10 * time.Millisecond
 			_, err := hs100.Discover("192.168.2.0/24", &commandSender{
-				response:      reponseWithName(aDeviceName),
+				response:      infoResponse(aDeviceName, aDeviceId),
 				responseDelay: &duration,
 			})
 			finished := time.Now()
-			maximum := start.Add(100*time.Millisecond)
+			maximum := start.Add(100 * time.Millisecond)
 
 			Expect(err).NotTo(HaveOccurred())
 			Expect(finished.Before(maximum)).To(Equal(true))
@@ -394,7 +436,7 @@ func offResponse() string {
 		}`
 }
 
-func reponseWithName(name string) string {
+func infoResponse(name string, deviceId string) string {
 	return `{  
 		   "system":{  
 		      "get_sysinfo":{  
@@ -404,7 +446,7 @@ func reponseWithName(name string) string {
 		         "type":"IOT.SMARTPLUGSWITCH",
 		         "model":"HS110(EU)",
 		         "mac":"AA:BB:CC:DD:EE:FF",
-		         "deviceId":"1234567890123456789012345678901234567890",
+		         "deviceId":"` + deviceId + `",
 		         "hwId":"01234567890123456789012345678912",
 		         "fwId":"98765432109876543210987654321032",
 		         "oemId":"ABCDEFABCDEFABCDEFABCDEFABCDEFAB",
@@ -432,13 +474,13 @@ func assertOneCommandSend(s *commandSender, address string, command string) {
 }
 
 type commandSender struct {
-	calls    int
-	address  string
-	command  string
-	response string
-	error    bool
+	calls            int
+	address          string
+	command          string
+	response         string
+	error            bool
 	allowedAddresses *[]string
-	responseDelay *time.Duration
+	responseDelay    *time.Duration
 }
 
 func (c *commandSender) SendCommand(addr string, cmd string) (string, error) {
