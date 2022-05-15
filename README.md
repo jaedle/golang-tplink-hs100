@@ -15,6 +15,7 @@ Yet another tp-link HS100 library for golang
 
 - 1.16
 - 1.17
+- 1.18
 
 ## Usage
 
