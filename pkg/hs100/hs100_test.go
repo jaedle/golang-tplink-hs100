@@ -3,7 +3,7 @@ package hs100_test
 import (
 	"errors"
 	"github.com/jaedle/golang-tplink-hs100/pkg/hs100"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"time"
 )
