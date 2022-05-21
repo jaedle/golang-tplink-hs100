@@ -1,6 +1,6 @@
 module github.com/jaedle/golang-tplink-hs100
 
-go 1.13
+go 1.16
 
 require (
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
