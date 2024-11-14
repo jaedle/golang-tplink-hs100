@@ -69,7 +69,7 @@ type setRelayResponse struct {
 func (hs100 *Hs100) TurnOff() error {
 	resp, err := hs100.commandSender.SendCommand(hs100.Address, turnOffCommand)
 	if err != nil {
-		return errors.Wrap(err, "error on sending turn on command for device")
+		return errors.Wrap(err, "error on sending turn off command for device")
 	}
 
 	r, err := parseSetRelayResponse(resp)
